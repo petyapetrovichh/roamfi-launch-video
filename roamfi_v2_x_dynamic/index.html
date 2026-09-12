@@ -1,0 +1,2397 @@
+<!doctype html>
+<html lang="en" data-resolution="landscape">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>RoamFi V2 — Launch (dynamic)</title>
+    <script src="assets/js/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Inter";
+        font-style: normal;
+        font-weight: 100 900;
+        font-display: block;
+        src: url("assets/fonts/Inter.woff2") format("woff2");
+      }
+
+      :root {
+        --bg: #eef3f6;
+        --card: #ffffff;
+        --ink: #0b1114;
+        --ink2: #38444b;
+        --muted: #5f6d76;
+        --faint: #74838d;
+        --line: #e2eaee;
+        --cyan: #05e3f7;
+        --cyan-soft: #d5fafe;
+        --cyan-deep: #04a6b6;
+        --green: #5fd89b;
+        --green-deep: #1f9c63;
+        --black: #0b0b0f;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--bg);
+      }
+
+      body {
+        font-family: "Inter", "Liberation Sans", sans-serif;
+        color: var(--ink);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      #root {
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--bg);
+      }
+
+      .clip {
+        position: absolute;
+        inset: 0;
+      }
+
+      /* camera layer: every scene's content lives in one of these so a whole
+         scene can be pushed / zoomed / masked as a single object */
+      .cam {
+        position: absolute;
+        inset: 0;
+        transform-origin: 50% 50%;
+      }
+
+      /* ------------------------------------------------ parallax backdrop */
+      #bg-far,
+      #bg-mid,
+      #bg-orbs {
+        position: absolute;
+        inset: -280px;
+        pointer-events: none;
+      }
+
+      #bg-far {
+        background:
+          radial-gradient(900px 640px at 80% 18%, rgba(5, 227, 247, 0.20), rgba(5, 227, 247, 0) 70%),
+          radial-gradient(760px 580px at 14% 86%, rgba(5, 227, 247, 0.13), rgba(5, 227, 247, 0) 72%),
+          linear-gradient(180deg, #f4f8fa 0%, #e9f0f4 100%);
+      }
+
+      #bg-mid {
+        opacity: 0.5;
+        background-image:
+          linear-gradient(rgba(11, 17, 20, 0.028) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(11, 17, 20, 0.028) 1px, transparent 1px);
+        background-size: 80px 80px;
+      }
+
+      .orb-drift {
+        position: absolute;
+      }
+
+      .orb {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: radial-gradient(circle at 50% 50%, rgba(5, 227, 247, 0.22), rgba(5, 227, 247, 0.06) 45%, rgba(5, 227, 247, 0) 70%);
+      }
+
+      /* -------------------------------------------------------- role chip */
+      #role-chip-w {
+        position: absolute;
+        left: 150px;
+        top: 118px;
+        width: 214px;
+        height: 60px;
+        z-index: 60;
+      }
+
+      #role-chip {
+        position: absolute;
+        inset: 0;
+        border-radius: 30px;
+        background: var(--black);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        opacity: 0;
+        visibility: hidden;
+        box-shadow: 0 14px 34px rgba(11, 17, 20, 0.18);
+      }
+
+      #role-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--cyan);
+        flex: none;
+      }
+
+      #role-window {
+        position: relative;
+        width: 120px;
+        height: 34px;
+        perspective: 500px;
+      }
+
+      .role-word {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 34px;
+        line-height: 34px;
+        text-align: center;
+        color: #fff;
+        font-size: 25px;
+        font-weight: 800;
+        letter-spacing: 0.15em;
+        transform-origin: 50% 50%;
+      }
+
+      #role-flash {
+        position: absolute;
+        left: -10px;
+        top: -10px;
+        width: 234px;
+        height: 80px;
+        border-radius: 40px;
+        border: 3px solid var(--cyan);
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      /* ------------------------------------------------------------ type */
+      .h-xxl {
+        font-size: 104px;
+        font-weight: 800;
+        letter-spacing: -0.035em;
+        line-height: 1.08;
+      }
+
+      .h-xl {
+        font-size: 88px;
+        font-weight: 800;
+        letter-spacing: -0.032em;
+        line-height: 1.1;
+      }
+
+      .h-l {
+        font-size: 62px;
+        font-weight: 800;
+        letter-spacing: -0.028em;
+        line-height: 1.12;
+      }
+
+      .kicker {
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        color: var(--muted);
+        text-transform: uppercase;
+      }
+
+      .body-m {
+        font-size: 34px;
+        font-weight: 500;
+        color: var(--ink2);
+        line-height: 1.35;
+      }
+
+      /* kinetic word / char units */
+      .w,
+      .c {
+        display: inline-block;
+        opacity: 0;
+        visibility: hidden;
+        transform-origin: 20% 100%;
+        white-space: pre;
+      }
+
+      .hl {
+        position: relative;
+        display: inline-block;
+      }
+
+      .hl-bar {
+        position: absolute;
+        left: -8px;
+        right: -8px;
+        bottom: 2px;
+        height: 15px;
+        border-radius: 6px;
+        background: var(--cyan);
+        transform-origin: left center;
+        transform: scaleX(0);
+      }
+
+      /* ------------------------------------------------------- UI mockups */
+      .ui-card {
+        position: absolute;
+        background: var(--card);
+        border-radius: 40px;
+        box-shadow: 0 40px 90px rgba(11, 17, 20, 0.13), 0 4px 14px rgba(11, 17, 20, 0.05);
+        overflow: hidden;
+      }
+
+      .float {
+        position: absolute;
+      }
+
+      .ui-panel {
+        position: absolute;
+        inset: 0;
+        padding: 44px 44px;
+        opacity: 0;
+        visibility: hidden;
+        transform-origin: 50% 50%;
+      }
+
+      .ui-title {
+        font-size: 40px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+
+      .ui-sub {
+        font-size: 22px;
+        font-weight: 500;
+        color: var(--muted);
+      }
+
+      .ui-label {
+        font-size: 19px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        color: var(--faint);
+        text-transform: uppercase;
+      }
+
+      .field {
+        position: relative;
+        height: 78px;
+        border-radius: 39px;
+        background: #f1f5f7;
+        border: 2px solid #f1f5f7;
+        display: flex;
+        align-items: center;
+        padding: 0 30px;
+        gap: 16px;
+      }
+
+      .mag {
+        width: 26px;
+        height: 26px;
+        border: 3px solid #8d9ba4;
+        border-radius: 50%;
+        position: relative;
+        flex: none;
+      }
+
+      .mag::after {
+        content: "";
+        position: absolute;
+        right: -9px;
+        bottom: -7px;
+        width: 13px;
+        height: 3px;
+        background: #8d9ba4;
+        border-radius: 2px;
+        transform: rotate(45deg);
+      }
+
+      .field-text {
+        font-size: 28px;
+        font-weight: 600;
+        color: var(--ink);
+        white-space: nowrap;
+      }
+
+      .field-ph {
+        font-size: 28px;
+        font-weight: 500;
+        color: #7f8d95;
+      }
+
+      .caret {
+        position: absolute;
+        width: 3px;
+        height: 34px;
+        background: var(--cyan);
+        border-radius: 2px;
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .ch {
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 84px;
+        border-bottom: 2px solid var(--line);
+        padding: 0 14px;
+        border-radius: 16px;
+      }
+
+      .row-l {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        font-size: 27px;
+        font-weight: 600;
+      }
+
+      .chev {
+        width: 13px;
+        height: 13px;
+        border-right: 3px solid #b6c2c9;
+        border-top: 3px solid #b6c2c9;
+        transform: rotate(45deg);
+        flex: none;
+      }
+
+      .flag-us {
+        width: 38px;
+        height: 26px;
+        border-radius: 4px;
+        overflow: hidden;
+        flex: none;
+        position: relative;
+        background: repeating-linear-gradient(180deg, #c8102e 0 3.7px, #ffffff 3.7px 7.4px);
+        box-shadow: inset 0 0 0 1px rgba(11, 17, 20, 0.12);
+      }
+
+      .flag-us::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 17px;
+        height: 14px;
+        background: #0a3161;
+      }
+
+      .globe {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        border: 3px solid #9fb0b9;
+        flex: none;
+        position: relative;
+      }
+
+      .globe::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: -3px;
+        bottom: -3px;
+        width: 3px;
+        margin-left: -1.5px;
+        background: #9fb0b9;
+      }
+
+      .globe::after {
+        content: "";
+        position: absolute;
+        left: -3px;
+        right: -3px;
+        top: 50%;
+        height: 3px;
+        margin-top: -1.5px;
+        background: #9fb0b9;
+      }
+
+      .tabs {
+        display: flex;
+        height: 74px;
+        border-radius: 37px;
+        background: #e7eef1;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .tab {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 23px;
+        font-weight: 700;
+        color: #6a7982;
+        position: relative;
+        z-index: 2;
+      }
+
+      .tab-pill {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 33.34%;
+        height: 74px;
+        border-radius: 37px;
+        background: var(--black);
+        z-index: 1;
+      }
+
+      .chips {
+        display: flex;
+        gap: 16px;
+      }
+
+      .chip {
+        flex: 1;
+        height: 72px;
+        border-radius: 36px;
+        background: #f1f5f7;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        font-weight: 700;
+        color: #6a7982;
+      }
+
+      .btn {
+        position: relative;
+        overflow: hidden;
+        height: 88px;
+        border-radius: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 29px;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+      }
+
+      .btn-cyan {
+        background: var(--cyan);
+        color: var(--ink);
+      }
+
+      .btn-black {
+        background: var(--black);
+        color: #fff;
+      }
+
+      .btn-off {
+        background: #e3eaee;
+        color: #a9b6bd;
+      }
+
+      /* light sweep that crosses a button / the logo */
+      .sheen {
+        position: absolute;
+        left: 0;
+        top: -60%;
+        width: 42%;
+        height: 220%;
+        background: linear-gradient(100deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.7) 50%, rgba(255, 255, 255, 0) 100%);
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      .btn-black .sheen {
+        background: linear-gradient(100deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.32) 50%, rgba(255, 255, 255, 0) 100%);
+      }
+
+      .conv {
+        height: 96px;
+        border-radius: 24px;
+        border: 2px solid var(--line);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 28px;
+        font-size: 30px;
+        font-weight: 800;
+      }
+
+      .coin {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: var(--ink);
+        color: #fff;
+        font-size: 22px;
+        font-weight: 800;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: none;
+      }
+
+      .wifi {
+        width: 34px;
+        height: 24px;
+        flex: none;
+        position: relative;
+      }
+
+      .wifi i {
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        border: 3px solid var(--ink);
+        border-bottom-color: transparent;
+        border-left-color: transparent;
+        border-right-color: transparent;
+        border-radius: 50%;
+      }
+
+      .wifi i:nth-child(1) {
+        width: 10px;
+        height: 10px;
+        margin-left: -5px;
+      }
+
+      .wifi i:nth-child(2) {
+        width: 22px;
+        height: 22px;
+        margin-left: -11px;
+      }
+
+      .sum-row {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        padding: 22px 0;
+        border-bottom: 2px solid var(--line);
+      }
+
+      .sum-k {
+        font-size: 27px;
+        font-weight: 600;
+      }
+
+      .sum-v {
+        font-size: 29px;
+        font-weight: 800;
+      }
+
+      .spinner {
+        width: 130px;
+        height: 130px;
+        border-radius: 34px;
+        background: #3c4449;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .spin-ring {
+        width: 62px;
+        height: 62px;
+        border-radius: 50%;
+        border: 7px solid rgba(255, 255, 255, 0.28);
+        border-top-color: #ffffff;
+      }
+
+      .check-circle {
+        width: 138px;
+        height: 138px;
+        border-radius: 50%;
+        background: var(--green);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .check-mark {
+        width: 62px;
+        height: 34px;
+        border-left: 10px solid #0c3a26;
+        border-bottom: 10px solid #0c3a26;
+        border-radius: 3px;
+        transform: rotate(-45deg);
+        margin-top: -12px;
+      }
+
+      /* confetti burst around a success check */
+      .burst {
+        position: absolute;
+        width: 0;
+        height: 0;
+        z-index: 30;
+      }
+
+      .spark {
+        position: absolute;
+        left: -8px;
+        top: -8px;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: var(--cyan);
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .spark.g {
+        background: var(--green);
+      }
+
+      .spark.k {
+        background: var(--ink);
+        width: 10px;
+        height: 10px;
+        left: -5px;
+        top: -5px;
+      }
+
+      /* tap cursor + ripples */
+      .cursor {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 46px;
+        height: 46px;
+        margin: -23px 0 0 -23px;
+        border-radius: 50%;
+        background: rgba(11, 17, 20, 0.30);
+        border: 3px solid rgba(11, 17, 20, 0.55);
+        opacity: 0;
+        visibility: hidden;
+        z-index: 40;
+      }
+
+      .ripple {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 120px;
+        height: 120px;
+        margin: -60px 0 0 -60px;
+        border-radius: 50%;
+        border: 4px solid var(--cyan);
+        opacity: 0;
+        visibility: hidden;
+        z-index: 39;
+      }
+
+      .ripple.r2 {
+        border-width: 3px;
+        border-color: var(--cyan-deep);
+      }
+
+      /* --------------------------------------------------------- diagram */
+      .node {
+        position: absolute;
+        border-radius: 22px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 0 24px;
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .node .nt {
+        font-size: 25px;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        white-space: nowrap;
+      }
+
+      .node .ns {
+        font-size: 18px;
+        font-weight: 500;
+        margin-top: 3px;
+        white-space: nowrap;
+      }
+
+      .node-dark {
+        background: var(--black);
+        color: #fff;
+      }
+
+      .node-dark .ns {
+        color: rgba(255, 255, 255, 0.76);
+      }
+
+      .node-grey {
+        background: #e4ebef;
+        color: var(--ink2);
+      }
+
+      .node-grey .ns {
+        color: #53616a;
+      }
+
+      .node-cyan {
+        background: var(--cyan);
+        color: var(--ink);
+      }
+
+      .node-cyan .ns {
+        color: rgba(11, 17, 20, 0.8);
+      }
+
+      .node-you {
+        background: #fff;
+        color: var(--ink);
+        border: 3px solid var(--cyan);
+        align-items: center;
+      }
+
+      .flow-svg {
+        position: absolute;
+        left: 0;
+        top: 0;
+      }
+
+      .flow-line {
+        fill: none;
+        stroke: #bccbd3;
+        stroke-width: 3;
+        stroke-linecap: round;
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .flow-comet {
+        fill: none;
+        stroke: var(--cyan-deep);
+        stroke-width: 7;
+        stroke-linecap: round;
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      /* a train of round dots that runs along a connector, looping */
+      .flow-dots {
+        fill: none;
+        stroke: var(--cyan-deep);
+        stroke-width: 9;
+        stroke-linecap: round;
+        stroke-dasharray: 0.01 28;
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .pct {
+        position: absolute;
+        font-size: 22px;
+        font-weight: 800;
+        color: #55636c;
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      /* --------------------------------------------------------- odometer */
+      .amount {
+        position: relative;
+        display: flex;
+        align-items: flex-start;
+        font-size: 96px;
+        font-weight: 800;
+        letter-spacing: -0.04em;
+        line-height: 108px;
+        height: 108px;
+        font-variant-numeric: tabular-nums;
+        transform-origin: 0% 50%;
+      }
+
+      .odo {
+        position: relative;
+        display: inline-block;
+        width: 57px;
+        height: 108px;
+        overflow: hidden;
+      }
+
+      .strip {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+      }
+
+      .strip span {
+        display: block;
+        height: 108px;
+        line-height: 108px;
+        text-align: center;
+      }
+
+      .amt-glow {
+        position: absolute;
+        left: -26px;
+        top: -8px;
+        right: -26px;
+        bottom: -8px;
+        border-radius: 30px;
+        background: radial-gradient(closest-side, rgba(5, 227, 247, 0.55), rgba(5, 227, 247, 0));
+        opacity: 0;
+        visibility: hidden;
+        z-index: -1;
+      }
+
+      .plus-chip {
+        display: inline-flex;
+        align-items: center;
+        height: 46px;
+        padding: 0 18px;
+        border-radius: 23px;
+        background: #e2f7ec;
+        color: var(--green-deep);
+        font-size: 24px;
+        font-weight: 800;
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      /* ---------------------------------------------------------- paypal */
+      .pp-mark {
+        width: 62px;
+        height: 62px;
+        border-radius: 50%;
+        background: #eef2f7;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: none;
+      }
+
+      .pp-p {
+        font-size: 36px;
+        font-weight: 800;
+        color: #17295c;
+        font-style: italic;
+        line-height: 1;
+      }
+
+      /* ----------------------------------------------------------- outro */
+      #ow-wrap {
+        position: absolute;
+        left: 0;
+        top: 402px;
+        width: 1920px;
+        height: 168px;
+      }
+
+      #ow-wrap span.word {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 168px;
+        line-height: 168px;
+        white-space: nowrap;
+        font-size: 92px;
+        font-weight: 900;
+        letter-spacing: -0.04em;
+        transform-origin: left center;
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      #ow-wrap span#ow-tail.word {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      #ow-caret {
+        position: absolute;
+        left: 0;
+        top: 44px;
+        width: 5px;
+        height: 82px;
+        border-radius: 3px;
+        background: var(--cyan-deep);
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      #ow-probe {
+        position: absolute;
+        left: -4000px;
+        top: 0;
+        font-size: 92px;
+        font-weight: 900;
+        letter-spacing: -0.04em;
+        white-space: pre;
+      }
+
+      #s7-logo-wrap {
+        position: absolute;
+        left: 0;
+        top: 392px;
+        width: 1920px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 46px;
+      }
+
+      #s7-logo-box {
+        position: relative;
+        width: 640px;
+        height: 153px;
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      #s7-logo {
+        width: 640px;
+        height: auto;
+        display: block;
+      }
+
+      #s7-logo-glow {
+        position: absolute;
+        left: -120px;
+        top: -80px;
+        width: 880px;
+        height: 313px;
+        border-radius: 50%;
+        background: radial-gradient(closest-side, rgba(5, 227, 247, 0.35), rgba(5, 227, 247, 0));
+        opacity: 0;
+        visibility: hidden;
+        z-index: -1;
+      }
+
+      #s7-logo-sheen {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 640px;
+        height: 153px;
+        -webkit-mask-image: url("assets/img/roamfi-logo.png");
+        -webkit-mask-size: 640px auto;
+        -webkit-mask-repeat: no-repeat;
+        mask-image: url("assets/img/roamfi-logo.png");
+        mask-size: 640px auto;
+        mask-repeat: no-repeat;
+        overflow: hidden;
+        pointer-events: none;
+      }
+
+      #s7-logo-sheen .sheen {
+        width: 30%;
+        background: linear-gradient(100deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.85) 50%, rgba(255, 255, 255, 0) 100%);
+      }
+
+      #s7-sub {
+        font-size: 34px;
+        font-weight: 600;
+        color: var(--ink2);
+        letter-spacing: 0.02em;
+      }
+
+      /* -------------------------------------------------- transition FX */
+      #iris-ring {
+        position: absolute;
+        left: 760px;
+        top: 340px;
+        width: 400px;
+        height: 400px;
+        border-radius: 50%;
+        border: 8px solid var(--cyan);
+        opacity: 0;
+        visibility: hidden;
+        z-index: 80;
+        pointer-events: none;
+      }
+
+      .wipe {
+        position: absolute;
+        left: -940px;
+        top: -200px;
+        width: 3800px;
+        height: 1480px;
+        transform: translateX(-3400px) skewX(-14deg);
+        z-index: 90;
+        pointer-events: none;
+      }
+
+      .vwipe {
+        position: absolute;
+        left: -300px;
+        top: 0;
+        width: 2520px;
+        height: 2600px;
+        transform: translateY(-3100px) skewY(-5deg);
+        z-index: 90;
+        pointer-events: none;
+      }
+
+      .wipe-cyan {
+        background: var(--cyan);
+        z-index: 91;
+      }
+
+      .wipe-dark {
+        background: var(--black);
+      }
+
+      /* helper: pre-animation hidden state */
+      .pre {
+        opacity: 0;
+        visibility: hidden;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="45"
+      data-width="1920"
+      data-height="1080"
+      data-fps="30">
+      <!-- ===================== parallax backdrop (3 layers) ============== -->
+      <div id="bg-far"></div>
+      <div id="bg-mid"></div>
+      <div id="bg-orbs">
+        <div class="orb-drift" id="orb1" style="left: 1320px; top: 80px; width: 720px; height: 720px"><div class="orb"></div></div>
+        <div class="orb-drift" id="orb2" style="left: 40px; top: 760px; width: 560px; height: 560px"><div class="orb"></div></div>
+        <div class="orb-drift" id="orb3" style="left: 820px; top: -120px; width: 380px; height: 380px"><div class="orb" style="opacity: 0.6"></div></div>
+      </div>
+
+      <!-- ===================== persistent role label ===================== -->
+      <div id="role-chip-w">
+        <div id="role-chip">
+          <div id="role-dot"></div>
+          <div id="role-window">
+            <span id="role-buyer" class="role-word">BUYER</span>
+            <span id="role-you" class="role-word pre">YOU</span>
+          </div>
+        </div>
+        <div id="role-flash"></div>
+      </div>
+
+      <!-- ========================= 1 · HOOK (0–4) ======================== -->
+      <section id="s1-hook" class="clip" data-start="0" data-duration="4" data-track-index="1">
+        <div class="cam" id="s1-cam">
+          <div id="s1-float" style="position: absolute; left: 0; top: 392px; width: 1920px; text-align: center">
+            <div id="s1-l1" class="h-xxl">
+              <span class="w">Someone,</span> <span class="w">somewhere,</span>
+            </div>
+            <div id="s1-l2" class="h-xxl" style="margin-top: 18px">
+              <span class="w">just</span> <span class="w">bought</span> <span class="w">an</span>
+              <span class="w hl">eSIM.<i id="s1-bar" class="hl-bar"></i></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================== 2 · BUYER FLOW (4–14) ==================== -->
+      <section id="s2-buyer" class="clip" data-start="4" data-duration="10" data-track-index="2">
+        <div class="cam" id="s2-cam">
+          <div style="position: absolute; left: 150px; top: 252px; width: 840px">
+            <div id="s2-kicker" class="kicker pre">A regular purchase</div>
+            <div style="position: relative; height: 300px; margin-top: 28px">
+              <div id="s2-cap1" class="h-l" style="position: absolute; left: 0; top: 0; width: 840px">
+                <span class="w">Picks</span> <span class="w">a</span> <span class="w">destination.</span>
+              </div>
+              <div id="s2-cap2" class="h-l" style="position: absolute; left: 0; top: 0; width: 840px">
+                <span class="w">Adds</span> <span class="w">$20.</span>
+              </div>
+              <div id="s2-cap3" class="h-l" style="position: absolute; left: 0; top: 0; width: 840px">
+                <span class="w">Pays.</span> <span class="w">Done.</span>
+              </div>
+            </div>
+            <div style="display: flex; gap: 14px; margin-top: 12px">
+              <div id="s2-d1" class="pre" style="width: 86px; height: 8px; border-radius: 4px; background: var(--cyan)"></div>
+              <div id="s2-d2" class="pre" style="width: 86px; height: 8px; border-radius: 4px; background: var(--cyan)"></div>
+              <div id="s2-d3" class="pre" style="width: 86px; height: 8px; border-radius: 4px; background: var(--cyan)"></div>
+            </div>
+          </div>
+
+          <div id="s2-card-w" class="float" style="left: 1040px; top: 128px; width: 700px; height: 824px">
+            <div id="s2-card" class="ui-card pre" style="left: 0; top: 0; width: 700px; height: 824px">
+              <!-- A · search + results -->
+              <div id="s2-pA" class="ui-panel">
+                <div class="ui-title">Select Your Destination</div>
+                <div id="s2-field" class="field" style="margin-top: 34px">
+                  <div class="mag"></div>
+                  <div style="position: relative; flex: 1">
+                    <div id="s2-ph" class="field-ph">Where do you want to go?</div>
+                    <div
+                      id="s2-typed"
+                      class="field-text"
+                      style="position: absolute; left: 0; top: 50%; margin-top: -19px">United States</div>
+                    <div id="s2-caret" class="caret" style="left: 0; top: 50%; margin-top: -17px"></div>
+                  </div>
+                </div>
+                <div id="s2-results" class="pre" style="margin-top: 36px">
+                  <div class="ui-label" style="margin-bottom: 10px">Results</div>
+                  <div id="s2-row-us" class="row s2-row">
+                    <div class="row-l"><span class="flag-us"></span>United States</div>
+                    <div class="chev"></div>
+                  </div>
+                  <div class="row s2-row">
+                    <div class="row-l"><span class="globe"></span>North America</div>
+                    <div class="chev"></div>
+                  </div>
+                  <div class="row s2-row" style="border-bottom: none">
+                    <div class="row-l"><span class="globe"></span>Global</div>
+                    <div class="chev"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- B · add funds -->
+              <div id="s2-pB" class="ui-panel">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 14px">
+                  <span class="flag-us"></span>
+                  <span style="font-size: 30px; font-weight: 800">United States</span>
+                </div>
+                <div class="tabs" style="margin-top: 30px">
+                  <div id="s2-tabpill" class="tab-pill"></div>
+                  <div id="s2-tab1" class="tab" style="color: #ffffff">Data</div>
+                  <div id="s2-tab2" class="tab">Data and calls</div>
+                  <div id="s2-tab3" class="tab">Add Funds</div>
+                </div>
+                <div id="s2-fundsbody" class="pre" style="margin-top: 34px">
+                  <div class="ui-sub">Add funds, pay for what you use.</div>
+                  <div
+                    style="
+                      margin-top: 22px;
+                      height: 108px;
+                      border-radius: 22px;
+                      background: #f1f5f7;
+                      display: flex;
+                      align-items: center;
+                      justify-content: space-between;
+                      padding: 0 30px;
+                    ">
+                    <span style="font-size: 54px; font-weight: 700">20</span>
+                    <span style="font-size: 30px; font-weight: 600; color: var(--faint)">$</span>
+                  </div>
+                  <div class="chips" style="margin-top: 22px">
+                    <div class="chip">$5</div>
+                    <div id="s2-chip20" class="chip">$20</div>
+                    <div class="chip">$50</div>
+                    <div class="chip">$100</div>
+                  </div>
+                  <div
+                    style="
+                      margin-top: 26px;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      gap: 14px;
+                      font-size: 22px;
+                      font-weight: 600;
+                      color: var(--muted);
+                    ">
+                    Data in United States
+                    <span
+                      style="
+                        background: #f1f5f7;
+                        border-radius: 12px;
+                        padding: 6px 14px;
+                        color: var(--ink2);
+                        font-weight: 700;
+                      ">$2.33/GB</span>
+                  </div>
+                  <div id="s2-conv" class="conv pre" style="margin-top: 24px">
+                    <span style="display: flex; align-items: center; gap: 12px"><span class="coin">$</span>20 USD</span>
+                    <span style="color: #b6c2c9; font-size: 34px">&#8594;</span>
+                    <span style="display: flex; align-items: center; gap: 12px"><span class="wifi"><i></i><i></i></span>8.58GB</span>
+                  </div>
+                  <div id="s2-choose" class="btn btn-cyan pre" style="margin-top: 26px">Choose<i id="s2-choose-sheen" class="sheen"></i></div>
+                </div>
+              </div>
+
+              <!-- C · purchase summary -->
+              <div id="s2-pC" class="ui-panel">
+                <div class="ui-title" style="text-align: center">Purchase Summary</div>
+                <div style="margin-top: 30px">
+                  <div class="sum-row">
+                    <div>
+                      <div class="sum-k">20 USD</div>
+                      <div class="ui-sub" style="margin-top: 4px">No Expiration, Valid Globally</div>
+                    </div>
+                    <div class="sum-v">$20</div>
+                  </div>
+                  <div class="sum-row">
+                    <div>
+                      <div class="sum-k">Service Fee</div>
+                      <div class="ui-sub" style="margin-top: 4px">One-time Fee</div>
+                    </div>
+                    <div class="sum-v" style="color: var(--faint)">&#8212;</div>
+                  </div>
+                  <div class="sum-row" style="border-bottom: none">
+                    <div class="sum-k" style="font-size: 34px; font-weight: 800">Total</div>
+                    <div class="sum-v" style="font-size: 36px">$20</div>
+                  </div>
+                </div>
+                <div class="ui-label" style="margin-top: 18px">You will receive</div>
+                <div class="conv" style="margin-top: 14px">
+                  <span style="display: flex; align-items: center; gap: 12px"><span class="coin">$</span>20 USD</span>
+                  <span style="color: #b6c2c9; font-size: 34px">&#8594;</span>
+                  <span style="display: flex; align-items: center; gap: 12px"><span class="wifi"><i></i><i></i></span>8.58GB</span>
+                </div>
+                <div
+                  id="s2-paybtn"
+                  class="btn btn-black"
+                  style="position: absolute; left: 44px; right: 44px; bottom: 48px">
+                  Continue to Payment<i id="s2-pay-sheen" class="sheen"></i>
+                </div>
+              </div>
+
+              <!-- D · processing -->
+              <div id="s2-pD" class="ui-panel" style="display: flex; flex-direction: column; align-items: center; justify-content: center">
+                <div class="spinner"><div id="s2-spin" class="spin-ring"></div></div>
+                <div style="margin-top: 40px; font-size: 36px; font-weight: 800">Processing Payment</div>
+                <div class="ui-sub" style="margin-top: 12px">Confirming your payment&hellip;</div>
+              </div>
+
+              <!-- E · success -->
+              <div id="s2-pE" class="ui-panel" style="display: flex; flex-direction: column; align-items: center; justify-content: center">
+                <div id="s2-check" class="check-circle pre"><div class="check-mark"></div></div>
+                <div id="s2-done" class="pre" style="margin-top: 42px; font-size: 42px; font-weight: 800">
+                  Purchase complete
+                </div>
+                <div id="s2-done2" class="ui-sub pre" style="margin-top: 14px; font-size: 26px">
+                  20 USD &middot; 8.58 GB live
+                </div>
+              </div>
+              <div id="s2-burst" class="burst" style="left: 350px; top: 343px">
+                <i class="spark"></i><i class="spark g"></i><i class="spark k"></i><i class="spark"></i>
+                <i class="spark g"></i><i class="spark"></i><i class="spark k"></i><i class="spark g"></i>
+                <i class="spark"></i><i class="spark g"></i><i class="spark k"></i><i class="spark"></i>
+              </div>
+
+              <div id="s2-ripple2" class="ripple r2"></div>
+              <div id="s2-ripple" class="ripple"></div>
+              <div id="s2-cursor" class="cursor"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 3 · BUYER → YOU SWITCH (14–18) ================ -->
+      <section id="s3-switch" class="clip" data-start="14" data-duration="4" data-track-index="3">
+        <div class="cam" id="s3-cam">
+          <div style="position: absolute; left: 0; top: 236px; width: 1920px; text-align: center">
+            <div id="s3-l1" class="h-xl">
+              <span class="w">You</span> <span class="w">bought</span> <span class="w">once.</span>
+            </div>
+            <div id="s3-l2" class="h-xl" style="margin-top: 14px; color: var(--muted)">
+              <span class="w">Weeks</span> <span class="w">ago.</span>
+            </div>
+          </div>
+
+          <div id="s3-n1-w" class="float" style="left: 250px; top: 604px; width: 450px; height: 158px">
+            <div id="s3-n1" class="ui-card pre" style="left: 0; top: 0; width: 450px; height: 158px; padding: 30px 34px">
+              <div class="ui-label">Their purchase</div>
+              <div style="margin-top: 14px; display: flex; align-items: center; gap: 14px">
+                <span class="coin" style="width: 40px; height: 40px; font-size: 25px">$</span>
+                <span style="font-size: 44px; font-weight: 800">20 eSIM</span>
+              </div>
+            </div>
+          </div>
+
+          <div id="s3-n2-w" class="float" style="left: 1220px; top: 604px; width: 450px; height: 158px">
+            <div id="s3-n2" class="ui-card pre" style="left: 0; top: 0; width: 450px; height: 158px; padding: 30px 34px">
+              <div class="ui-label">Your revenue sharing</div>
+              <div style="margin-top: 10px; font-size: 56px; font-weight: 800; letter-spacing: -0.03em">
+                $4.19
+              </div>
+            </div>
+          </div>
+
+          <svg class="flow-svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+            <path id="s3-path" class="flow-line" d="M700,683 C830,566 1090,566 1220,683" />
+            <path id="s3-dots" class="flow-dots" d="M700,683 C830,566 1090,566 1220,683" />
+            <path
+              id="s3-comet"
+              class="flow-comet"
+              stroke-dasharray="54 3000"
+              d="M700,683 C830,566 1090,566 1220,683"
+            />
+          </svg>
+
+          <div id="s3-cap" class="body-m" style="position: absolute; left: 0; top: 852px; width: 1920px; text-align: center">
+            <span class="w">Their</span> <span class="w">purchase</span> <span class="w">pays</span> <span class="w">into</span> <span class="w">your</span> <span class="w">balance.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================== 4 · REVENUE SHARING (18–27) ================= -->
+      <section id="s4-revenue" class="clip" data-start="18" data-duration="9" data-track-index="4">
+        <div class="cam" id="s4-cam">
+          <div id="s4-card-w" class="float" style="left: 150px; top: 232px; width: 600px; height: 384px">
+            <div id="s4-card" class="ui-card pre" style="left: 0; top: 0; width: 600px; height: 384px; padding: 40px 42px">
+              <div class="ui-label">Revenue sharing balance</div>
+              <div style="display: flex; align-items: center; gap: 22px; margin-top: 14px">
+                <div id="s4-amount" class="amount">
+                  <i id="s4-amt-glow" class="amt-glow"></i>
+                  <span>$</span><span>4</span><span>.</span>
+                  <span class="odo"><span id="odo-t" class="strip"></span></span>
+                  <span class="odo"><span id="odo-h" class="strip"></span></span>
+                </div>
+                <div id="s4-plus" class="plus-chip">+$0.01</div>
+              </div>
+              <div style="height: 2px; background: var(--line); margin-top: 26px"></div>
+              <div style="display: flex; gap: 46px; margin-top: 26px">
+                <div>
+                  <div style="font-size: 30px; font-weight: 800">82.25%</div>
+                  <div class="ui-sub" style="font-size: 20px; margin-top: 2px">Current weight</div>
+                </div>
+                <div>
+                  <div style="font-size: 30px; font-weight: 800">131</div>
+                  <div class="ui-sub" style="font-size: 20px; margin-top: 2px">Eligible purchases</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="s4-copy" style="position: absolute; left: 150px; top: 660px; width: 660px">
+            <div style="font-size: 42px; font-weight: 800; letter-spacing: -0.025em; line-height: 1.22">
+              <span class="w">Get</span> <span class="w">up</span> <span class="w">to</span> <span class="w">50%</span> <span class="w">of</span> <span class="w">RoamFi</span> <span class="w">revenue</span> <span class="w">from</span> <span class="w">every</span> <span class="w">purchase</span> <span class="w">made</span> <span class="w">by</span> <span class="w">others.</span>
+            </div>
+          </div>
+
+          <div
+            id="s4-auto"
+            class="pre"
+            style="
+              position: absolute;
+              left: 150px;
+              top: 872px;
+              height: 62px;
+              display: inline-flex;
+              align-items: center;
+              padding: 0 30px;
+              border-radius: 31px;
+              background: var(--cyan-soft);
+              color: #04606b;
+              font-size: 25px;
+              font-weight: 800;
+              overflow: hidden;
+            ">
+            Automatic &middot; Instant &middot; No action needed<i id="s4-auto-sheen" class="sheen"></i>
+          </div>
+
+          <div id="s4-flow" style="position: absolute; left: 800px; top: 160px; width: 1000px; height: 780px">
+            <div id="s4-ftitle" class="pre">
+              <div style="font-size: 34px; font-weight: 800; letter-spacing: -0.02em">How the money flows</div>
+              <div class="ui-sub" style="margin-top: 6px; font-size: 22px">Every eSIM purchase, split automatically</div>
+            </div>
+
+            <svg class="flow-svg" width="1000" height="780" viewBox="0 0 1000 780">
+              <path id="p1" class="flow-line" d="M160,165 C215,165 215,142 270,142" />
+              <path id="p2" class="flow-line" d="M160,165 C215,165 215,318 270,318" />
+              <path id="p3" class="flow-line" d="M650,318 C696,318 700,272 740,272" />
+              <path id="p4" class="flow-line" d="M650,318 C666,318 666,478 670,478" />
+              <path id="p5" class="flow-line" d="M835,526 C835,576 820,572 820,620" />
+              <path id="d1" class="flow-dots" d="M160,165 C215,165 215,142 270,142" />
+              <path id="d2" class="flow-dots" d="M160,165 C215,165 215,318 270,318" />
+              <path id="d3" class="flow-dots" d="M650,318 C696,318 700,272 740,272" />
+              <path id="d4" class="flow-dots" d="M650,318 C666,318 666,478 670,478" />
+              <path id="d5" class="flow-dots" d="M835,526 C835,576 820,572 820,620" />
+              <path id="c2" class="flow-comet" stroke-dasharray="40 3000" d="M160,165 C215,165 215,318 270,318" />
+              <path id="c4" class="flow-comet" stroke-dasharray="40 3000" d="M650,318 C666,318 666,478 670,478" />
+              <path id="c5" class="flow-comet" stroke-dasharray="40 3000" d="M835,526 C835,576 820,572 820,620" />
+            </svg>
+
+            <div id="n-buyer" class="node node-dark" style="left: 0; top: 130px; width: 160px; height: 70px; align-items: center">
+              <div class="nt" style="letter-spacing: 0.1em">BUYER</div>
+            </div>
+            <div id="n-cost" class="node node-grey" style="left: 270px; top: 100px; width: 330px; height: 84px">
+              <div class="nt">eSIM provider cost</div>
+              <div class="ns">Deducted first</div>
+            </div>
+            <div id="n-rev" class="node node-dark" style="left: 270px; top: 270px; width: 380px; height: 96px">
+              <div class="nt">RoamFi business revenue</div>
+              <div class="ns">Price minus provider cost</div>
+            </div>
+            <div id="n-co" class="node node-dark" style="left: 740px; top: 230px; width: 250px; height: 84px">
+              <div class="nt">RoamFi</div>
+              <div class="ns">Company revenue</div>
+            </div>
+            <div id="n-pool" class="node node-cyan" style="left: 670px; top: 430px; width: 330px; height: 96px">
+              <div class="nt">Revenue sharing pool</div>
+              <div class="ns">Shared with past buyers</div>
+            </div>
+            <div id="n-you" class="node node-you" style="left: 740px; top: 620px; width: 160px; height: 72px">
+              <div class="nt" style="letter-spacing: 0.1em">YOU</div>
+            </div>
+
+            <div id="pct-a" class="pct" style="left: 664px; top: 240px">50%</div>
+            <div id="pct-b" class="pct" style="left: 614px; top: 396px">50%</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== 5 · KINETIC TYPE (27–32) =================== -->
+      <section id="s5-kinetic" class="clip" data-start="27" data-duration="5" data-track-index="5">
+        <div class="cam" id="s5-cam">
+          <div style="position: absolute; left: 0; top: 296px; width: 1920px; text-align: center">
+            <div id="s5-l1" style="position: relative; display: inline-block">
+              <span id="s5-t1" class="h-xl" style="color: var(--muted)">No referral link.</span>
+              <i
+                id="s5-s1"
+                style="
+                  position: absolute;
+                  left: -10px;
+                  right: -10px;
+                  top: 52%;
+                  height: 8px;
+                  border-radius: 4px;
+                  background: var(--muted);
+                  transform-origin: left center;
+                  transform: scaleX(0);
+                "></i>
+            </div>
+          </div>
+          <div style="position: absolute; left: 0; top: 424px; width: 1920px; text-align: center">
+            <div id="s5-l2" style="position: relative; display: inline-block">
+              <span id="s5-t2" class="h-xl" style="color: var(--muted)">No sign-up.</span>
+              <i
+                id="s5-s2"
+                style="
+                  position: absolute;
+                  left: -10px;
+                  right: -10px;
+                  top: 52%;
+                  height: 8px;
+                  border-radius: 4px;
+                  background: var(--muted);
+                  transform-origin: left center;
+                  transform: scaleX(0);
+                "></i>
+            </div>
+          </div>
+          <div id="s5-float" style="position: absolute; left: 0; top: 588px; width: 1920px; text-align: center">
+            <div id="s5-l3" class="h-xl" data-layout-allow-overlap style="display: inline-block; font-size: 96px">
+              <span class="w">Just</span> <span class="w">buy</span> <span class="w">once</span> <span class="w">&mdash;</span> <span class="w">earn</span> <span class="w">for</span>
+              <span class="w hl" id="s5-hl">365 days<i id="s5-bar" class="hl-bar" style="height: 16px; bottom: -10px"></i></span><span class="w">.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== 6 · WITHDRAW (32–38) ======================= -->
+      <section id="s6-withdraw" class="clip" data-start="32" data-duration="6" data-track-index="6">
+        <div class="cam" id="s6-cam">
+          <div id="s6-head" class="pre" style="position: absolute; left: 140px; top: 330px; width: 420px">
+            <div style="font-size: 66px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.08">
+              Cash out to PayPal.
+            </div>
+            <div class="ui-sub" style="margin-top: 22px; font-size: 28px">Instant transfer.</div>
+          </div>
+
+          <div id="s6-card-w" class="float" style="left: 600px; top: 130px; width: 720px; height: 820px">
+            <div id="s6-card" class="ui-card pre" style="left: 0; top: 0; width: 720px; height: 820px">
+              <!-- A · balance + withdraw -->
+              <div id="s6-pA" class="ui-panel" style="display: flex; flex-direction: column; justify-content: center">
+                <div class="ui-label">Revenue sharing balance</div>
+                <div style="font-size: 104px; font-weight: 800; letter-spacing: -0.04em; margin-top: 10px">
+                  $4.22
+                </div>
+                <div id="s6-wbtn" class="btn btn-cyan" style="margin-top: 44px">Withdraw<i id="s6-wbtn-sheen" class="sheen"></i></div>
+              </div>
+
+              <!-- B · withdraw sheet -->
+              <div id="s6-pB" class="ui-panel">
+                <div style="width: 96px; height: 7px; border-radius: 4px; background: #dbe4e9; margin: 0 auto 30px"></div>
+                <div class="ui-label">From</div>
+                <div
+                  style="
+                    margin-top: 12px;
+                    height: 92px;
+                    border-radius: 22px;
+                    border: 2px solid var(--line);
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    padding: 0 26px;
+                  ">
+                  <span style="display: flex; align-items: center; gap: 16px">
+                    <span
+                      style="
+                        width: 34px;
+                        height: 34px;
+                        border-radius: 50%;
+                        background: var(--green);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                      "><i
+                        style="
+                          display: block;
+                          width: 15px;
+                          height: 8px;
+                          border-left: 4px solid #0c3a26;
+                          border-bottom: 4px solid #0c3a26;
+                          transform: rotate(-45deg);
+                          margin-top: -4px;
+                        "></i></span>
+                    <span style="font-size: 26px; font-weight: 600">Revenue sharing balance</span>
+                  </span>
+                  <span style="font-size: 27px; font-weight: 800">4.22</span>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 32px">
+                  <span class="ui-label">Amount</span>
+                  <span class="ui-sub" style="font-size: 20px">Available: 4.22</span>
+                </div>
+                <div
+                  id="s6-amtfield"
+                  style="
+                    margin-top: 12px;
+                    height: 100px;
+                    border-radius: 24px;
+                    background: #f1f5f7;
+                    border: 2px solid #f1f5f7;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    padding: 0 28px;
+                  ">
+                  <span style="display: flex; align-items: baseline; gap: 12px; position: relative">
+                    <span style="font-size: 34px; font-weight: 700; color: var(--faint)">$</span>
+                    <span id="s6-amt" style="font-size: 42px; font-weight: 800; letter-spacing: -0.02em">3.22</span>
+                    <span id="s6-amtph" style="font-size: 42px; font-weight: 700; color: #93a1a9">0.00</span>
+                    <span id="s6-amtcaret" class="caret" style="left: 34px; top: -2px; height: 44px"></span>
+                  </span>
+                  <span style="font-size: 26px; font-weight: 800; color: var(--cyan-deep)">MAX</span>
+                </div>
+
+                <div class="ui-label" style="margin-top: 32px">To</div>
+                <div
+                  style="
+                    margin-top: 12px;
+                    border-radius: 24px;
+                    border: 2px solid var(--line);
+                    padding: 26px;
+                    display: flex;
+                    align-items: center;
+                    gap: 20px;
+                  ">
+                  <span class="pp-mark"><span class="pp-p">P</span></span>
+                  <span>
+                    <span style="display: block; font-size: 30px; font-weight: 800">PayPal</span>
+                    <span class="ui-sub" style="font-size: 20px">Instant transfer</span>
+                  </span>
+                </div>
+
+                <div
+                  id="s6-confirm"
+                  class="btn btn-off"
+                  style="position: absolute; left: 44px; right: 44px; bottom: 48px">
+                  Confirm Withdraw<i id="s6-confirm-sheen" class="sheen"></i>
+                </div>
+              </div>
+
+              <!-- C · sent -->
+              <div id="s6-pC" class="ui-panel" style="display: flex; flex-direction: column; align-items: center; justify-content: center">
+                <div id="s6-check" class="check-circle pre"><div class="check-mark"></div></div>
+                <div id="s6-sent" class="pre" style="margin-top: 42px; font-size: 42px; font-weight: 800">
+                  Withdrawal sent
+                </div>
+                <div id="s6-sent2" class="ui-sub pre" style="margin-top: 14px; font-size: 26px">
+                  $3.22 to PayPal
+                </div>
+              </div>
+              <div id="s6-burst" class="burst" style="left: 360px; top: 341px">
+                <i class="spark"></i><i class="spark g"></i><i class="spark k"></i><i class="spark"></i>
+                <i class="spark g"></i><i class="spark"></i><i class="spark k"></i><i class="spark g"></i>
+                <i class="spark"></i><i class="spark g"></i><i class="spark k"></i><i class="spark"></i>
+              </div>
+
+              <div id="s6-ripple2" class="ripple r2"></div>
+              <div id="s6-ripple" class="ripple"></div>
+              <div id="s6-cursor" class="cursor"></div>
+            </div>
+          </div>
+
+          <div id="s6-toast-w" class="float" style="left: 1396px; top: 434px; width: 404px; height: 196px">
+            <div id="s6-toast" class="ui-card pre" style="left: 0; top: 0; width: 404px; height: 196px; padding: 34px">
+              <div style="display: flex; align-items: center; gap: 18px">
+                <span class="pp-mark"><span class="pp-p">P</span></span>
+                <span>
+                  <span style="display: block; font-size: 24px; font-weight: 700; color: var(--muted)">PayPal</span>
+                  <span style="display: block; font-size: 22px; font-weight: 500; color: var(--faint)">Instant transfer</span>
+                </span>
+              </div>
+              <div id="s6-plus" class="pre" style="position: relative; display: inline-block; margin-top: 22px; font-size: 54px; font-weight: 800; color: var(--green-deep); letter-spacing: -0.03em; transform-origin: 0% 50%">
+                <i id="s6-plus-glow" class="amt-glow" style="background: radial-gradient(closest-side, rgba(95, 216, 155, 0.6), rgba(95, 216, 155, 0))"></i>
+                +$3.22
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================== 7 · OUTRO (38–45) ======================== -->
+      <section id="s7-outro" class="clip" data-start="38" data-duration="7" data-track-index="7">
+        <div class="cam" id="s7-cam">
+          <div id="ow-wrap">
+            <span id="ow-esim" class="word">eSIM</span>
+            <span id="ow-dots" class="word">...</span>
+            <span id="ow-tail" class="word">that pays you back</span>
+            <span id="ow-caret"></span>
+            <span id="ow-probe">&nbsp;</span>
+          </div>
+
+          <div id="s7-logo-wrap">
+            <div id="s7-logo-box">
+              <i id="s7-logo-glow"></i>
+              <img id="s7-logo" src="assets/img/roamfi-logo.png" alt="RoamFi" />
+              <div id="s7-logo-sheen"><i id="s7-sheen" class="sheen"></i></div>
+            </div>
+            <div id="s7-sub">
+              <span class="w">roamfi.net</span> <span class="w">&middot;</span> <span class="w">200+</span> <span class="w">destinations</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================= transition overlays ===================== -->
+      <div id="iris-ring"></div>
+      <div id="wipe-dark" class="wipe wipe-dark"></div>
+      <div id="wipe-cyan" class="wipe wipe-cyan"></div>
+      <div id="vwipe-dark" class="vwipe wipe-dark"></div>
+      <div id="vwipe-cyan" class="vwipe wipe-cyan"></div>
+
+      <!-- ========================== AUDIO BED ============================ -->
+      <audio id="bgm" src="assets/audio/bgm-roamfi.mp3" data-start="0" data-duration="45" data-track-index="20" data-volume="0.38"></audio>
+
+      <audio id="sfx-s1-in" src="assets/sfx/whoosh-short.mp3" data-start="0.05" data-duration="0.57" data-track-index="21" data-volume="0.45"></audio>
+      <audio id="sfx-buyer-pop" src="assets/sfx/pop.mp3" data-start="2.5" data-duration="0.72" data-track-index="22" data-volume="0.65"></audio>
+
+      <audio id="sfx-s2-in" src="assets/sfx/whoosh.mp3" data-start="3.75" data-duration="0.57" data-track-index="23" data-volume="0.5"></audio>
+      <audio id="sfx-tap-search" src="assets/sfx/click.mp3" data-start="4.5" data-duration="0.37" data-track-index="24" data-volume="0.75"></audio>
+      <audio id="sfx-typing-dest" src="assets/sfx/typing.mp3" data-start="4.75" data-duration="1.05" data-track-index="25" data-volume="0.5"></audio>
+      <audio id="sfx-results" src="assets/sfx/whoosh-short.mp3" data-start="6.0" data-duration="0.57" data-track-index="26" data-volume="0.35"></audio>
+      <audio id="sfx-tap-us" src="assets/sfx/click.mp3" data-start="7.0" data-duration="0.37" data-track-index="27" data-volume="0.75"></audio>
+      <audio id="sfx-tap-tab" src="assets/sfx/click-soft.mp3" data-start="7.5" data-duration="0.37" data-track-index="28" data-volume="0.75"></audio>
+      <audio id="sfx-tap-20" src="assets/sfx/click-soft.mp3" data-start="8.0" data-duration="0.37" data-track-index="29" data-volume="0.75"></audio>
+      <audio id="sfx-conv" src="assets/sfx/pop.mp3" data-start="8.5" data-duration="0.72" data-track-index="30" data-volume="0.45"></audio>
+      <audio id="sfx-tap-choose" src="assets/sfx/click.mp3" data-start="9.5" data-duration="0.37" data-track-index="31" data-volume="0.75"></audio>
+      <audio id="sfx-tap-pay" src="assets/sfx/click.mp3" data-start="10.5" data-duration="0.37" data-track-index="32" data-volume="0.85"></audio>
+      <audio id="sfx-success" src="assets/sfx/chime.mp3" data-start="12.0" data-duration="1.9" data-track-index="33" data-volume="0.8"></audio>
+
+      <audio id="sfx-s3-in" src="assets/sfx/whoosh.mp3" data-start="13.7" data-duration="0.57" data-track-index="34" data-volume="0.5"></audio>
+      <audio id="sfx-switch" src="assets/sfx/ping.mp3" data-start="14.76" data-duration="1.32" data-track-index="35" data-volume="0.55"></audio>
+      <audio id="sfx-cards" src="assets/sfx/whoosh-short.mp3" data-start="15.38" data-duration="0.57" data-track-index="36" data-volume="0.4"></audio>
+      <audio id="sfx-flow-land" src="assets/sfx/pop.mp3" data-start="16.75" data-duration="0.72" data-track-index="37" data-volume="0.5"></audio>
+
+      <audio id="sfx-s4-in" src="assets/sfx/whoosh.mp3" data-start="17.7" data-duration="0.57" data-track-index="38" data-volume="0.45"></audio>
+      <audio id="sfx-node-1" src="assets/sfx/pop.mp3" data-start="18.9" data-duration="0.72" data-track-index="39" data-volume="0.3"></audio>
+      <audio id="sfx-node-2" src="assets/sfx/pop.mp3" data-start="20.6" data-duration="0.72" data-track-index="40" data-volume="0.3"></audio>
+      <audio id="sfx-node-3" src="assets/sfx/pop.mp3" data-start="21.5" data-duration="0.72" data-track-index="41" data-volume="0.35"></audio>
+      <audio id="sfx-tick" src="assets/sfx/ping.mp3" data-start="22.0" data-duration="1.32" data-track-index="42" data-volume="0.65"></audio>
+      <audio id="sfx-auto" src="assets/sfx/pop.mp3" data-start="24.0" data-duration="0.72" data-track-index="43" data-volume="0.5"></audio>
+
+      <audio id="sfx-s5-in" src="assets/sfx/whoosh.mp3" data-start="26.75" data-duration="0.57" data-track-index="44" data-volume="0.5"></audio>
+      <audio id="sfx-k1" src="assets/sfx/whoosh-short.mp3" data-start="27.1" data-duration="0.57" data-track-index="45" data-volume="0.45"></audio>
+      <audio id="sfx-k2" src="assets/sfx/whoosh-short.mp3" data-start="28.0" data-duration="0.57" data-track-index="46" data-volume="0.45"></audio>
+      <audio id="sfx-k3" src="assets/sfx/impact-bass-1.mp3" data-start="29.0" data-duration="2.1" data-track-index="47" data-volume="0.5"></audio>
+      <audio id="sfx-k4" src="assets/sfx/sparkle.mp3" data-start="29.9" data-duration="1.4" data-track-index="48" data-volume="0.35"></audio>
+
+      <audio id="sfx-s6-in" src="assets/sfx/whoosh.mp3" data-start="31.75" data-duration="0.57" data-track-index="49" data-volume="0.45"></audio>
+      <audio id="sfx-tap-wd" src="assets/sfx/click.mp3" data-start="32.5" data-duration="0.37" data-track-index="50" data-volume="0.8"></audio>
+      <audio id="sfx-sheet" src="assets/sfx/whoosh-short.mp3" data-start="32.85" data-duration="0.57" data-track-index="51" data-volume="0.5"></audio>
+      <audio id="sfx-tap-amt" src="assets/sfx/click-soft.mp3" data-start="33.5" data-duration="0.37" data-track-index="52" data-volume="0.6"></audio>
+      <audio id="sfx-typing-amt" src="assets/sfx/typing.mp3" data-start="33.65" data-duration="0.8" data-track-index="53" data-volume="0.45"></audio>
+      <audio id="sfx-tap-conf" src="assets/sfx/click.mp3" data-start="35.5" data-duration="0.37" data-track-index="54" data-volume="0.85"></audio>
+      <audio id="sfx-payout" src="assets/sfx/notification.mp3" data-start="36.0" data-duration="1.9" data-track-index="55" data-volume="0.8"></audio>
+
+      <audio id="sfx-s7-in" src="assets/sfx/whoosh-short.mp3" data-start="37.7" data-duration="0.57" data-track-index="56" data-volume="0.4"></audio>
+      <audio id="sfx-outro-pop" src="assets/sfx/pop.mp3" data-start="38.05" data-duration="0.72" data-track-index="57" data-volume="0.65"></audio>
+      <audio id="sfx-outro-type" src="assets/sfx/typing.mp3" data-start="39.3" data-duration="1.4" data-track-index="58" data-volume="0.45"></audio>
+      <audio id="sfx-outro-glide" src="assets/sfx/whoosh-short.mp3" data-start="41.4" data-duration="0.57" data-track-index="59" data-volume="0.42"></audio>
+      <audio id="sfx-logo" src="assets/sfx/sparkle.mp3" data-start="43.3" data-duration="1.6" data-track-index="60" data-volume="0.6"></audio>
+    </div>
+
+    <script>
+      (function () {
+        "use strict";
+
+        const $ = (s) => document.querySelector(s);
+        const $$ = (s) => Array.from(document.querySelectorAll(s));
+
+        const CARD_SHADOW = "0 40px 90px rgba(11,17,20,0.13), 0 4px 14px rgba(11,17,20,0.05)";
+        const CHIP_SHADOW = "0 14px 34px rgba(11,17,20,0.18)";
+
+        const tl = gsap.timeline({ paused: true });
+
+        /* ------------------------------------------------ small utilities */
+
+        // fromTo with immediateRender off, so the CSS pre-state holds for
+        // every frame before `at`. Every entrance/exit goes through this so a
+        // random seek always lands on a fully defined state.
+        function ft(t, from, to, at) {
+          tl.fromTo(t, from, Object.assign({}, to, { immediateRender: false }), at);
+        }
+
+        // Split an element's text into per-unit spans (chars). `.c` is hidden
+        // in CSS so nothing flashes before its entrance runs.
+        function splitUnits(el, cls) {
+          const text = el.textContent;
+          el.textContent = "";
+          const out = [];
+          for (const c of text) {
+            const s = document.createElement("span");
+            s.className = cls;
+            s.textContent = c;
+            el.appendChild(s);
+            out.push(s);
+          }
+          return out;
+        }
+
+        // Typewriter split (`.ch` — opacity only, keeps inline flow).
+        function splitChars(el) {
+          return splitUnits(el, "ch");
+        }
+
+        function buildStrip(el, digits) {
+          for (const d of digits) {
+            const s = document.createElement("span");
+            s.textContent = d;
+            el.appendChild(s);
+          }
+        }
+
+        /* --------------------------------------------- motion vocabulary */
+
+        // Fly in from an off-screen offset with overshoot.
+        function fly(sel, at, o) {
+          o = o || {};
+          const from = { autoAlpha: 0, x: o.x || 0, y: o.y || 0, rotation: o.rot || 0, scale: o.scale == null ? 1 : o.scale };
+          const to = { autoAlpha: 1, x: 0, y: 0, rotation: 0, scale: 1, duration: o.dur || 0.7, ease: o.ease || "back.out(1.6)" };
+          if (o.blur) {
+            from.filter = "blur(" + o.blur + "px)";
+            to.filter = "blur(0px)";
+          }
+          if (o.stagger) to.stagger = o.stagger;
+          ft(sel, from, to, at);
+        }
+
+        // Punch in: 0.6 → overshoot → 1.
+        function punch(sel, at, o) {
+          o = o || {};
+          fly(sel, at, {
+            scale: o.scale == null ? 0.6 : o.scale,
+            dur: o.dur || 0.55,
+            ease: o.ease || "back.out(2.2)",
+            x: o.x || 0,
+            y: o.y || 0,
+            rot: o.rot || 0,
+            stagger: o.stagger,
+          });
+        }
+
+        // Fly out with energy (and optional blur / shrink).
+        function out(sel, at, o) {
+          o = o || {};
+          const from = { autoAlpha: 1, x: 0, y: 0, rotation: 0, scale: 1 };
+          const to = {
+            autoAlpha: 0,
+            x: o.x || 0,
+            y: o.y || 0,
+            rotation: o.rot || 0,
+            scale: o.scale == null ? 1 : o.scale,
+            duration: o.dur || 0.32,
+            ease: o.ease || "power3.in",
+          };
+          if (o.blur) {
+            from.filter = "blur(0px)";
+            to.filter = "blur(" + o.blur + "px)";
+          }
+          if (o.stagger) to.stagger = o.stagger;
+          ft(sel, from, to, at);
+        }
+
+        // Gentle idle bob / breathing on a wrapper. Finite repeats, so the
+        // timeline stays bounded and seeks deterministically.
+        function idle(sel, at, until, o) {
+          o = o || {};
+          const half = (o.period || 2.6) / 2;
+          const n = Math.max(1, Math.floor((until - at) / half));
+          const from = { y: 0, x: 0, scale: 1, rotation: 0 };
+          const to = {
+            y: o.y || 0,
+            x: o.x || 0,
+            scale: 1 + (o.s || 0),
+            rotation: o.rot || 0,
+            duration: half,
+            ease: "sine.inOut",
+            yoyo: true,
+            repeat: n - 1,
+          };
+          ft(sel, from, to, at);
+        }
+
+        // Kinetic text: per-word / per-char entrance with a little rotation
+        // and skew that settles into place.
+        function kin(sel, at, o) {
+          o = o || {};
+          const from = {
+            autoAlpha: 0,
+            y: o.y == null ? 70 : o.y,
+            x: o.x || 0,
+            rotation: o.rot == null ? 6 : o.rot,
+            skewX: o.skew == null ? 10 : o.skew,
+            scale: o.scale == null ? 0.9 : o.scale,
+          };
+          const to = {
+            autoAlpha: 1,
+            y: 0,
+            x: 0,
+            rotation: 0,
+            skewX: 0,
+            scale: 1,
+            duration: o.dur || 0.6,
+            ease: o.ease || "back.out(1.8)",
+            stagger: o.stagger == null ? 0.07 : o.stagger,
+          };
+          ft(sel, from, to, at);
+        }
+
+        function kinOut(sel, at, o) {
+          o = o || {};
+          ft(
+            sel,
+            { autoAlpha: 1, y: 0, rotation: 0, skewX: 0, scale: 1 },
+            {
+              autoAlpha: 0,
+              y: o.y == null ? -44 : o.y,
+              rotation: o.rot || -3,
+              skewX: o.skew || -6,
+              scale: o.scale || 0.96,
+              duration: o.dur || 0.3,
+              ease: "power3.in",
+              stagger: o.stagger == null ? 0.04 : o.stagger,
+            },
+            at
+          );
+        }
+
+        // Cyan glow pulse (box-shadow), looping between `at` and `until`.
+        function glow(sel, at, until, o) {
+          o = o || {};
+          const c = o.color || "5,227,247";
+          const half = o.period || 0.55;
+          let n = Math.floor((until - at) / half);
+          if (n % 2) n -= 1;
+          n = Math.max(2, n);
+          const base = o.base ? o.base + ", " : "";
+          ft(
+            sel,
+            { boxShadow: base + "0 0 0px 0px rgba(" + c + ",0)" },
+            {
+              boxShadow: base + "0 0 " + (o.blur || 34) + "px " + (o.spread == null ? 6 : o.spread) + "px rgba(" + c + ",0.6)",
+              duration: half,
+              ease: "sine.inOut",
+              yoyo: true,
+              repeat: n - 1,
+            },
+            at
+          );
+        }
+
+        // Text glow pulse (text-shadow).
+        function tglow(sel, at, until, o) {
+          o = o || {};
+          const c = o.color || "5,227,247";
+          const half = o.period || 0.5;
+          let n = Math.floor((until - at) / half);
+          if (n % 2) n -= 1;
+          n = Math.max(2, n);
+          ft(
+            sel,
+            { textShadow: "0 0 0px rgba(" + c + ",0)" },
+            { textShadow: "0 0 30px rgba(" + c + ",0.8)", duration: half, ease: "sine.inOut", yoyo: true, repeat: n - 1 },
+            at
+          );
+        }
+
+        // A light sweep crossing a button / the logo.
+        function sheen(sel, at, dur) {
+          dur = dur || 0.7;
+          ft(sel, { autoAlpha: 1, xPercent: -160, skewX: -18 }, { xPercent: 290, skewX: -18, duration: dur, ease: "power2.inOut" }, at);
+          tl.to(sel, { autoAlpha: 0, duration: 0.04 }, at + dur);
+        }
+
+        // Finger tap: cursor moves, presses, double ripple, and the tapped
+        // element itself squashes then bounces back.
+        function tap(p, x, y, at, target) {
+          tl.to(p.cur, { x: x, y: y, duration: 0.32, ease: "power2.inOut" }, at - 0.32);
+          ft(p.cur, { scale: 1 }, { scale: 0.6, duration: 0.08, ease: "power2.in" }, at);
+          tl.to(p.cur, { scale: 1, duration: 0.32, ease: "back.out(3)" }, at + 0.08);
+          ft(p.r1, { autoAlpha: 0.95, scale: 0.2, x: x, y: y }, { autoAlpha: 0, scale: 1.45, duration: 0.55, ease: "power2.out" }, at);
+          ft(p.r2, { autoAlpha: 0.7, scale: 0.2, x: x, y: y }, { autoAlpha: 0, scale: 2.2, duration: 0.8, ease: "power2.out" }, at + 0.06);
+          if (target) {
+            ft(target, { scale: 1 }, { scale: 0.93, duration: 0.1, ease: "power2.in" }, at);
+            tl.to(target, { scale: 1, duration: 0.45, ease: "back.out(4)" }, at + 0.1);
+          }
+        }
+
+        // Confetti burst: sparks fly out radially, deterministic angles.
+        function burst(sel, at) {
+          const sparks = $$(sel + " .spark");
+          sparks.forEach((s, i) => {
+            const a = (i / sparks.length) * Math.PI * 2 + (i % 2) * 0.22;
+            const r = 150 + (i % 3) * 38;
+            ft(s, { autoAlpha: 1, x: 0, y: 0, scale: 0.4 }, { x: Math.cos(a) * r, y: Math.sin(a) * r, scale: 1.1, duration: 0.55, ease: "power3.out" }, at);
+            tl.to(s, { autoAlpha: 0, scale: 0.2, duration: 0.3, ease: "power2.in" }, at + 0.35);
+          });
+        }
+
+        // Draw an SVG connector on.
+        function drawLine(sel, at, dur) {
+          const el = $(sel);
+          const len = el.getTotalLength();
+          ft(
+            el,
+            { autoAlpha: 1, strokeDasharray: len + " " + len, strokeDashoffset: len },
+            { autoAlpha: 1, strokeDashoffset: 0, duration: dur, ease: "power2.inOut" },
+            at
+          );
+        }
+
+        // A single "comet" dash travelling along a path.
+        function comet(sel, at, dur) {
+          const el = $(sel);
+          const len = el.getTotalLength();
+          ft(el, { autoAlpha: 1, strokeDashoffset: 54 }, { autoAlpha: 1, strokeDashoffset: -len, duration: dur, ease: "power1.inOut" }, at);
+          tl.to(el, { autoAlpha: 0, duration: 0.18 }, at + dur - 0.18);
+        }
+
+        // A looping train of dots flowing along a path (dash pattern scroll).
+        function train(sel, at, until, o) {
+          o = o || {};
+          const per = 28;
+          const sp = o.sp || 0.45;
+          const n = Math.max(1, Math.floor((until - at) / sp));
+          ft(sel, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3 }, at);
+          ft(sel, { strokeDashoffset: 0 }, { strokeDashoffset: -per, duration: sp, ease: "none", repeat: n - 1 }, at);
+          tl.to(sel, { autoAlpha: 0, duration: 0.2 }, until - 0.2);
+        }
+
+        // Type text out character by character with a caret that tracks the end.
+        function typeOut(textSel, caretSel, at, each) {
+          const el = $(textSel);
+          const width = el.getBoundingClientRect().width;
+          const chars = splitChars(el);
+          const dur = chars.length * each;
+          ft(chars, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.01, stagger: { each: each } }, at);
+          ft(caretSel, { autoAlpha: 1, x: 0 }, { autoAlpha: 1, x: width, duration: dur, ease: "none" }, at);
+          tl.to(caretSel, { autoAlpha: 0, duration: 0.18 }, at + dur + 0.12);
+          return dur;
+        }
+
+        /* ------------------------------------------- scene transitions */
+
+        // Diagonal slash wipe across the cut: cyan leads, a dark band trails.
+        function slash(at, dir) {
+          const a = -3400 * dir;
+          const b = 3400 * dir;
+          ft("#wipe-cyan", { x: a, skewX: -14 }, { x: b, skewX: -14, duration: 0.7, ease: "power3.inOut" }, at - 0.35);
+          ft("#wipe-dark", { x: a, skewX: -14 }, { x: b, skewX: -14, duration: 0.7, ease: "power3.inOut" }, at - 0.28);
+        }
+
+        // Vertical wipe, top to bottom.
+        function vslash(at) {
+          ft("#vwipe-cyan", { y: -3100, skewY: -5 }, { y: 1600, skewY: -5, duration: 0.7, ease: "power3.inOut" }, at - 0.35);
+          ft("#vwipe-dark", { y: -3100, skewY: -5 }, { y: 1600, skewY: -5, duration: 0.7, ease: "power3.inOut" }, at - 0.28);
+        }
+
+        // Parallax: three backdrop layers pan at different speeds.
+        let bx = 0;
+        let by = 0;
+        function pan(at, dx, dy, dur) {
+          const nx = bx + dx;
+          const ny = by + dy;
+          const layers = [
+            ["#bg-far", 40],
+            ["#bg-mid", 90],
+            ["#bg-orbs", 170],
+          ];
+          layers.forEach(([sel, k]) => {
+            ft(sel, { x: bx * k, y: by * k }, { x: nx * k, y: ny * k, duration: dur || 0.8, ease: "power3.inOut" }, at);
+          });
+          bx = nx;
+          by = ny;
+        }
+
+        // Camera-style zoom pulse on the backdrop layers.
+        function zoomBg(at, s, dur) {
+          const layers = [
+            ["#bg-far", 0.5],
+            ["#bg-mid", 1],
+            ["#bg-orbs", 1.7],
+          ];
+          layers.forEach(([sel, k]) => {
+            ft(sel, { scale: 1 }, { scale: 1 + s * k, duration: dur / 2, yoyo: true, repeat: 1, ease: "power2.inOut" }, at);
+          });
+        }
+
+        /* ===================================================== build ==== */
+        function build() {
+          const P2 = { cur: "#s2-cursor", r1: "#s2-ripple", r2: "#s2-ripple2" };
+          const P6 = { cur: "#s6-cursor", r1: "#s6-ripple", r2: "#s6-ripple2" };
+
+          /* ======================= backdrop, always alive ============== */
+          idle("#orb1", 0, 45, { x: -70, y: 46, period: 9 });
+          idle("#orb2", 0, 45, { x: 56, y: -56, period: 7.5 });
+          idle("#orb3", 0, 45, { x: 80, y: 34, period: 11.25 });
+
+          /* ========================== SCENE 1 ========================== */
+          // 0–4 · the hook, word by word
+          kin("#s1-l1 .w", 0.1, { y: 96, rot: 8, skew: 12, stagger: 0.1, dur: 0.72 });
+          kin("#s1-l2 .w", 0.44, { y: 96, rot: 8, skew: 12, stagger: 0.085, dur: 0.72 });
+          ft("#s1-bar", { scaleX: 0 }, { scaleX: 1, duration: 0.45, ease: "power3.out" }, 1.18);
+          idle("#s1-float", 1.4, 3.6, { y: -9, s: 0.012, period: 2.2 });
+
+          // the BUYER label drops in
+          fly("#role-chip", 2.5, { y: -160, rot: -9, scale: 0.8, dur: 0.7, ease: "back.out(2)" });
+          glow("#role-chip", 2.55, 3.65, { period: 0.55, base: CHIP_SHADOW });
+          idle("#role-chip-w", 3.1, 26.5, { y: -5, period: 2.8 });
+
+          // camera pushes through the hook into the buyer flow
+          ft("#s1-cam", { scale: 1, autoAlpha: 1, filter: "blur(0px)" }, { scale: 1.35, autoAlpha: 0, filter: "blur(12px)", duration: 0.42, ease: "power2.in" }, 3.58);
+          pan(3.7, -1, 0, 0.8);
+          slash(4.0, 1);
+
+          /* ========================== SCENE 2 ========================== */
+          // 4–14 · the buyer's purchase, sped up
+          fly("#s2-card", 4.02, { x: 780, rot: 7, scale: 0.9, dur: 0.85, ease: "back.out(1.5)" });
+          idle("#s2-card-w", 4.9, 13.6, { y: -7, period: 3.2 });
+          fly("#s2-kicker", 4.15, { x: -160, dur: 0.55, ease: "back.out(1.7)" });
+          kin("#s2-cap1 .w", 4.25, { x: -70, y: 30, rot: -4, skew: 8, stagger: 0.08 });
+
+          const tick = { autoAlpha: 0.22, scaleX: 0.35 };
+          const tickTo = { autoAlpha: 1, scaleX: 1, duration: 0.4, transformOrigin: "left center" };
+          ft("#s2-d1", tick, tickTo, 4.35);
+          ft("#s2-d2", tick, tickTo, 7.55);
+          ft("#s2-d3", tick, tickTo, 11.05);
+
+          // --- panel A: search a destination, pick it
+          ft("#s2-pA", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3 }, 4.05);
+          ft("#s2-cursor", { autoAlpha: 0, x: 560, y: 700, scale: 1 }, { autoAlpha: 1, x: 560, y: 700, duration: 0.2 }, 4.05);
+
+          tap(P2, 300, 196, 4.5, "#s2-field");
+          tl.to("#s2-field", { borderColor: "#05e3f7", backgroundColor: "#fbfeff", duration: 0.25 }, 4.52);
+          tl.to("#s2-ph", { autoAlpha: 0, duration: 0.2 }, 4.56);
+          typeOut("#s2-typed", "#s2-caret", 4.76, 0.062);
+
+          ft("#s2-results", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.2 }, 6.0);
+          fly("#s2-results .s2-row", 6.0, { x: 90, dur: 0.5, ease: "back.out(1.6)", stagger: 0.07 });
+          tl.to("#s2-row-us", { backgroundColor: "#e9fbfd", duration: 0.25 }, 6.7);
+          tap(P2, 300, 400, 7.0, "#s2-row-us");
+
+          // native-style push: A slides out left, B lands from the right
+          out("#s2-pA", 7.2, { x: -170, scale: 0.95, blur: 6, dur: 0.3 });
+          fly("#s2-pB", 7.32, { x: 220, scale: 0.96, dur: 0.5, ease: "back.out(1.3)" });
+          kinOut("#s2-cap1 .w", 7.15);
+          kin("#s2-cap2 .w", 7.42, { x: -70, y: 30, rot: -4, skew: 8, stagger: 0.08 });
+
+          // --- panel B: add funds, $20 preset
+          tap(P2, 560, 118, 7.5, "#s2-tab3");
+          ft("#s2-tabpill", { x: 0 }, { x: 408, duration: 0.45, ease: "back.out(1.4)" }, 7.52);
+          tl.to("#s2-tab1", { color: "#6a7982", duration: 0.2 }, 7.55);
+          tl.to("#s2-tab3", { color: "#ffffff", duration: 0.2 }, 7.72);
+          fly("#s2-fundsbody", 7.66, { y: 44, dur: 0.5, ease: "back.out(1.5)" });
+
+          tap(P2, 336, 470, 8.0, "#s2-chip20");
+          tl.to("#s2-chip20", { backgroundColor: "#05e3f7", color: "#0b1114", duration: 0.25, ease: "power2.out" }, 8.0);
+
+          punch("#s2-conv", 8.5, { scale: 0.6, dur: 0.55, ease: "back.out(2.4)" });
+          fly("#s2-choose", 8.72, { y: 40, scale: 0.94, dur: 0.5, ease: "back.out(1.8)" });
+          glow("#s2-choose", 8.95, 9.5, { period: 0.27 });
+          sheen("#s2-choose-sheen", 9.0, 0.5);
+          tap(P2, 336, 706, 9.5, "#s2-choose");
+
+          out("#s2-pB", 9.68, { x: -170, scale: 0.95, blur: 6, dur: 0.3 });
+          fly("#s2-pC", 9.8, { x: 220, scale: 0.96, dur: 0.5, ease: "back.out(1.3)" });
+
+          // --- panel C: summary (no bonus/reward line — deliberately omitted)
+          glow("#s2-paybtn", 10.08, 10.5, { period: 0.21 });
+          sheen("#s2-pay-sheen", 10.12, 0.55);
+          tap(P2, 336, 728, 10.5, "#s2-paybtn");
+          out("#s2-pC", 10.7, { scale: 0.9, blur: 8, dur: 0.28 });
+          tl.to("#s2-cursor", { autoAlpha: 0, duration: 0.2 }, 10.7);
+          kinOut("#s2-cap2 .w", 10.68);
+          kin("#s2-cap3 .w", 10.95, { x: -70, y: 30, rot: -4, skew: 8, stagger: 0.08 });
+
+          // --- panel D: processing
+          fly("#s2-pD", 10.85, { scale: 0.85, dur: 0.45, ease: "back.out(1.6)" });
+          ft("#s2-spin", { rotation: 0 }, { rotation: 900, duration: 1.15, ease: "none" }, 10.85);
+          out("#s2-pD", 11.85, { scale: 1.15, blur: 8, dur: 0.22 });
+
+          // --- panel E: done — elastic check + confetti
+          ft("#s2-pE", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.2 }, 11.98);
+          ft("#s2-check", { autoAlpha: 0, scale: 0.2, rotation: -30 }, { autoAlpha: 1, scale: 1, rotation: 0, duration: 0.9, ease: "elastic.out(1, 0.5)" }, 12.0);
+          burst("#s2-burst", 12.02);
+          glow("#s2-check", 12.2, 13.4, { period: 0.6, color: "95,216,155" });
+          fly("#s2-done", 12.3, { y: 40, scale: 0.9, dur: 0.5, ease: "back.out(2)" });
+          fly("#s2-done2", 12.45, { y: 28, dur: 0.45, ease: "back.out(2)" });
+
+          // scene exit: copy flies off, card implodes, iris opens the next scene
+          kinOut("#s2-cap3 .w", 13.55);
+          out("#s2-kicker", 13.55, { x: -70 });
+          out("#s2-d1, #s2-d2, #s2-d3", 13.55, { y: 12, stagger: 0.03 });
+          out("#s2-card", 13.62, { scale: 0.25, rot: -10, blur: 12, dur: 0.38 });
+
+          ft("#iris-ring", { autoAlpha: 1, scale: 0.1 }, { autoAlpha: 0, scale: 6.5, duration: 0.75, ease: "power2.out" }, 14.0);
+          ft("#s3-cam", { clipPath: "circle(0% at 50% 50%)" }, { clipPath: "circle(80% at 50% 50%)", duration: 0.65, ease: "power2.out" }, 14.0);
+          zoomBg(14.0, 0.08, 0.8);
+
+          /* ========================== SCENE 3 ========================== */
+          // 14–18 · the label switches: that buyer is not you
+          kin("#s3-l1 .w", 14.08, { x: -130, y: 20, rot: -5, skew: 12, stagger: 0.09, dur: 0.7 });
+
+          // BUYER → YOU: ring flash, chip punch, 3D card flip of the word
+          ft("#role-flash", { autoAlpha: 0, scale: 0.8 }, { autoAlpha: 1, scale: 1.05, duration: 0.3, ease: "power2.out" }, 14.72);
+          tl.to("#role-flash", { autoAlpha: 0, scale: 1.7, duration: 0.55, ease: "power2.out" }, 15.02);
+          ft("#role-chip", { scale: 1 }, { scale: 1.16, duration: 0.2, yoyo: true, repeat: 1, ease: "power2.out" }, 14.76);
+          glow("#role-chip", 14.76, 16.0, { period: 0.31, base: CHIP_SHADOW });
+          ft("#role-buyer", { rotationX: 0, y: 0, autoAlpha: 1, transformPerspective: 500 }, { rotationX: 90, y: -14, autoAlpha: 0, duration: 0.26, ease: "power2.in" }, 14.78);
+          ft("#role-you", { rotationX: -90, y: 14, autoAlpha: 0, transformPerspective: 500 }, { rotationX: 0, y: 0, autoAlpha: 1, duration: 0.5, ease: "back.out(2.2)" }, 15.0);
+
+          kin("#s3-l2 .w", 15.05, { x: 130, y: 20, rot: 5, skew: -12, stagger: 0.09, dur: 0.7 });
+          fly("#s3-n1", 15.38, { x: -780, rot: -6, dur: 0.8, ease: "back.out(1.5)" });
+          fly("#s3-n2", 15.5, { x: 780, rot: 6, dur: 0.8, ease: "back.out(1.5)" });
+          idle("#s3-n1-w", 16.2, 17.6, { y: -6, period: 2.2 });
+          idle("#s3-n2-w", 16.3, 17.6, { y: -6, period: 2.2 });
+
+          drawLine("#s3-path", 15.75, 0.8);
+          comet("#s3-comet", 15.9, 1.0);
+          train("#s3-dots", 16.1, 17.55, { sp: 0.4 });
+          ft("#s3-n2", { scale: 1 }, { scale: 1.07, duration: 0.18, yoyo: true, repeat: 1, ease: "power2.out" }, 16.85);
+          glow("#s3-n2", 16.85, 17.55, { period: 0.35, base: CARD_SHADOW });
+          kin("#s3-cap .w", 16.6, { y: 30, rot: 3, skew: 6, stagger: 0.05, dur: 0.5 });
+
+          // camera pushes through into the revenue scene
+          ft("#s3-cam", { scale: 1, autoAlpha: 1, filter: "blur(0px)" }, { scale: 1.4, autoAlpha: 0, filter: "blur(12px)", duration: 0.42, ease: "power2.in" }, 17.6);
+          zoomBg(17.7, 0.1, 0.9);
+
+          /* ========================== SCENE 4 ========================== */
+          // 18–27 · what revenue sharing actually pays you
+          ft("#s4-cam", { scale: 0.8, autoAlpha: 0, filter: "blur(10px)" }, { scale: 1, autoAlpha: 1, filter: "blur(0px)", duration: 0.6, ease: "power3.out" }, 18.0);
+          fly("#s4-card", 18.05, { x: -580, rot: -6, scale: 0.92, dur: 0.85, ease: "back.out(1.5)" });
+          idle("#s4-card-w", 19.0, 26.5, { y: -5, s: 0.006, period: 3.0 });
+          kin("#s4-copy .w", 18.35, { y: 40, rot: 3, skew: 8, stagger: 0.045, dur: 0.55 });
+          fly("#s4-ftitle", 18.55, { y: 44, dur: 0.5, ease: "back.out(1.8)" });
+
+          // money-flow diagram: buyer → business revenue → 50/50 → you,
+          // with dot trains looping along every connector once it's drawn
+          punch("#n-buyer", 18.85, { x: -40 });
+          drawLine("#p1", 19.05, 0.45);
+          drawLine("#p2", 19.05, 0.45);
+          comet("#c2", 19.2, 0.6);
+          train("#d1", 19.5, 26.4);
+          train("#d2", 19.5, 26.4);
+          fly("#n-cost", 19.4, { x: -60, scale: 0.9, dur: 0.5, ease: "back.out(2)" });
+          punch("#n-rev", 19.55, { x: -40 });
+
+          drawLine("#p3", 20.0, 0.45);
+          drawLine("#p4", 20.0, 0.45);
+          punch("#pct-a", 20.2, {});
+          punch("#pct-b", 20.2, {});
+          comet("#c4", 20.3, 0.6);
+          train("#d3", 20.5, 26.4);
+          train("#d4", 20.5, 26.4);
+          fly("#n-co", 20.5, { x: -60, scale: 0.9, dur: 0.5, ease: "back.out(2)" });
+          punch("#n-pool", 20.65, { x: -40, ease: "back.out(2.4)" });
+          glow("#n-pool", 21.0, 26.4, { period: 0.8 });
+
+          drawLine("#p5", 21.1, 0.4);
+          comet("#c5", 21.2, 0.55);
+          train("#d5", 21.5, 26.4);
+          punch("#n-you", 21.5, { y: 30, ease: "back.out(2.6)" });
+          ft("#n-you", { boxShadow: "0 0 0 0px rgba(5,227,247,0.6)" }, { boxShadow: "0 0 0 22px rgba(5,227,247,0)", duration: 0.8, ease: "power2.out" }, 21.75);
+
+          idle("#n-buyer", 22.3, 26.3, { y: -4, period: 2.0 });
+          idle("#n-rev", 22.5, 26.5, { y: -4, period: 2.0 });
+          idle("#n-pool", 22.4, 26.4, { y: -5, period: 2.0 });
+          idle("#n-you", 22.6, 26.6, { y: -5, period: 2.0 });
+
+          // the balance actually ticks: $4.19 → $4.20 — scale-pop + glow
+          buildStrip($("#odo-t"), ["1", "2"]);
+          buildStrip($("#odo-h"), ["9", "0"]);
+          ft("#odo-t", { y: 0 }, { y: -108, duration: 0.45, ease: "back.out(1.2)" }, 22.0);
+          ft("#odo-h", { y: 0 }, { y: -108, duration: 0.45, ease: "back.out(1.2)" }, 22.0);
+          ft("#s4-amount", { scale: 1 }, { scale: 1.1, duration: 0.16, ease: "power2.out" }, 22.0);
+          tl.to("#s4-amount", { scale: 1, duration: 0.5, ease: "back.out(3)" }, 22.16);
+          ft("#s4-amt-glow", { autoAlpha: 0, scale: 0.8 }, { autoAlpha: 1, scale: 1.1, duration: 0.2, ease: "power2.out" }, 22.0);
+          tl.to("#s4-amt-glow", { autoAlpha: 0, scale: 1.3, duration: 0.7, ease: "power2.out" }, 22.2);
+          punch("#s4-plus", 22.05, { y: 20, scale: 0.5, ease: "back.out(2.6)" });
+          out("#s4-plus", 23.6, { y: -26 });
+          ft("#s4-card", { scale: 1 }, { scale: 1.04, duration: 0.16, ease: "power2.out" }, 22.0);
+          tl.to("#s4-card", { scale: 1, duration: 0.5, ease: "back.out(3)" }, 22.16);
+          glow("#s4-card", 22.0, 23.2, { period: 0.6, base: CARD_SHADOW });
+
+          punch("#s4-auto", 24.0, { y: 30, scale: 0.7, ease: "back.out(2.2)" });
+          sheen("#s4-auto-sheen", 24.4, 0.6);
+
+          // scene exit — everything leaves the way it came, then the slash
+          out("#s4-card", 26.55, { x: -100, scale: 0.96, dur: 0.32 });
+          kinOut("#s4-copy .w", 26.5, { stagger: 0.015 });
+          out("#s4-auto", 26.55, { y: 34 });
+          out("#s4-flow", 26.5, { x: 100, scale: 0.96, dur: 0.34 });
+          tl.to("#role-chip", { autoAlpha: 0, scale: 0.8, y: -30, duration: 0.3, ease: "power3.in" }, 26.6);
+          pan(26.7, 1, 0, 0.8);
+          slash(27.0, -1);
+
+          /* ========================== SCENE 5 ========================== */
+          // 27–32 · what you do NOT have to do — per-character kinetic type
+          const c1 = splitUnits($("#s5-t1"), "c");
+          const c2 = splitUnits($("#s5-t2"), "c");
+          kin(c1, 27.1, { y: 70, rot: 12, skew: 10, scale: 0.8, stagger: 0.026, dur: 0.55, ease: "back.out(2)" });
+          ft("#s5-s1", { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power3.inOut" }, 27.78);
+          kin(c2, 28.05, { y: 70, rot: 12, skew: 10, scale: 0.8, stagger: 0.03, dur: 0.55, ease: "back.out(2)" });
+          ft("#s5-s2", { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power3.inOut" }, 28.58);
+
+          // the payoff line lands word by word; the two "no" lines step back
+          kin("#s5-l3 .w", 29.05, { y: 90, rot: 6, skew: 10, scale: 0.7, stagger: 0.075, dur: 0.7, ease: "back.out(2)" });
+          ft("#s5-l1, #s5-l2", { scale: 1, filter: "blur(0px)", opacity: 1, y: 0 }, { scale: 0.9, filter: "blur(3px)", opacity: 0.45, y: -14, duration: 0.6, ease: "power2.out" }, 29.2);
+          ft("#s5-bar", { scaleX: 0 }, { scaleX: 1, duration: 0.45, ease: "power3.out" }, 29.95);
+          tglow("#s5-hl", 30.2, 31.4, { period: 0.4 });
+          idle("#s5-float", 30.4, 31.5, { y: -8, s: 0.01, period: 2.2 });
+
+          ft("#s5-l3", { scale: 1, autoAlpha: 1, filter: "blur(0px)" }, { scale: 1.25, autoAlpha: 0, filter: "blur(10px)", duration: 0.4, ease: "power2.in" }, 31.58);
+          tl.to("#s5-l1", { autoAlpha: 0, y: -70, duration: 0.3, ease: "power3.in" }, 31.55);
+          tl.to("#s5-l2", { autoAlpha: 0, y: -70, duration: 0.3, ease: "power3.in" }, 31.58);
+          pan(31.7, 0, -1, 0.8);
+          vslash(32.0);
+
+          /* ========================== SCENE 6 ========================== */
+          // 32–38 · take the money out, to PayPal
+          fly("#role-chip", 32.05, { y: -140, rot: -6, scale: 0.8, dur: 0.6, ease: "back.out(2)" });
+          idle("#role-chip-w", 32.7, 37.5, { y: -5, period: 2.8 });
+          fly("#s6-head", 32.05, { x: -440, rot: -4, dur: 0.7, ease: "back.out(1.6)" });
+          fly("#s6-card", 32.02, { y: 780, rot: 5, scale: 0.92, dur: 0.85, ease: "back.out(1.4)" });
+          idle("#s6-card-w", 32.9, 37.5, { y: -6, period: 3.0 });
+          ft("#s6-pA", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.25 }, 32.1);
+          glow("#s6-wbtn", 32.15, 32.55, { period: 0.2 });
+          sheen("#s6-wbtn-sheen", 32.18, 0.45);
+          ft("#s6-cursor", { autoAlpha: 0, x: 560, y: 740, scale: 1 }, { autoAlpha: 1, x: 560, y: 740, duration: 0.2 }, 32.1);
+          tap(P6, 360, 566, 32.5, "#s6-wbtn");
+          out("#s6-pA", 32.72, { y: -60, scale: 0.96, blur: 6, dur: 0.28 });
+
+          // the withdraw sheet springs up — PayPal only
+          fly("#s6-pB", 32.85, { y: 640, dur: 0.6, ease: "back.out(1.2)" });
+          tap(P6, 300, 396, 33.5, "#s6-amtfield");
+          tl.to("#s6-amtfield", { borderColor: "#05e3f7", backgroundColor: "#fbfeff", duration: 0.25 }, 33.52);
+          tl.to("#s6-amtph", { autoAlpha: 0, duration: 0.18 }, 33.56);
+          typeOut("#s6-amt", "#s6-amtcaret", 33.66, 0.12);
+
+          // confirm goes live with a sweep, then is pressed
+          tl.to("#s6-confirm", { backgroundColor: "#0b0b0f", color: "#ffffff", duration: 0.3, ease: "power2.out" }, 34.55);
+          ft("#s6-confirm", { scale: 1 }, { scale: 1.04, duration: 0.18, yoyo: true, repeat: 1, ease: "power2.out" }, 34.55);
+          sheen("#s6-confirm-sheen", 34.95, 0.55);
+          glow("#s6-confirm", 34.9, 35.5, { period: 0.3 });
+          tap(P6, 360, 748, 35.5, "#s6-confirm");
+          out("#s6-pB", 35.7, { scale: 0.9, blur: 8, dur: 0.26 });
+          tl.to("#s6-cursor", { autoAlpha: 0, duration: 0.2 }, 35.7);
+
+          ft("#s6-pC", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.2 }, 35.85);
+          ft("#s6-check", { autoAlpha: 0, scale: 0.2, rotation: -30 }, { autoAlpha: 1, scale: 1, rotation: 0, duration: 0.9, ease: "elastic.out(1, 0.5)" }, 35.9);
+          burst("#s6-burst", 35.92);
+          fly("#s6-sent", 36.2, { y: 40, scale: 0.9, dur: 0.5, ease: "back.out(2)" });
+          fly("#s6-sent2", 36.35, { y: 28, dur: 0.45, ease: "back.out(2)" });
+
+          // the PayPal toast lands with the chime; +$3.22 pops and glows
+          fly("#s6-toast", 36.0, { x: 580, rot: 8, scale: 0.9, dur: 0.9, ease: "elastic.out(1, 0.6)" });
+          idle("#s6-toast-w", 37.0, 37.6, { y: -6, period: 1.2 });
+          ft("#s6-plus", { autoAlpha: 0, scale: 0.5 }, { autoAlpha: 1, scale: 1.15, duration: 0.25, ease: "power2.out" }, 36.35);
+          tl.to("#s6-plus", { scale: 1, duration: 0.5, ease: "back.out(3)" }, 36.6);
+          ft("#s6-plus-glow", { autoAlpha: 0, scale: 0.8 }, { autoAlpha: 1, scale: 1.1, duration: 0.2 }, 36.35);
+          tl.to("#s6-plus-glow", { autoAlpha: 0, scale: 1.3, duration: 0.8 }, 36.55);
+          glow("#s6-toast", 36.4, 37.5, { period: 0.55, color: "31,156,99", base: CARD_SHADOW });
+
+          // zoom through into the outro
+          ft("#s6-cam", { scale: 1, autoAlpha: 1, filter: "blur(0px)" }, { scale: 1.5, autoAlpha: 0, filter: "blur(14px)", duration: 0.42, ease: "power2.in" }, 37.58);
+          tl.to("#role-chip", { autoAlpha: 0, scale: 0.8, y: -30, duration: 0.3, ease: "power3.in" }, 37.6);
+          zoomBg(37.6, 0.1, 0.9);
+
+          /* ========================== SCENE 7 ========================== */
+          // 38–45 · "eSIM that pays you back", then the logo
+          const esim = $("#ow-esim");
+          const dots = $("#ow-dots");
+          const tail = $("#ow-tail");
+
+          // Measure the real rendered widths, then solve for both positions.
+          const wE = esim.getBoundingClientRect().width;
+          const wD = dots.getBoundingClientRect().width;
+          const wT = tail.getBoundingClientRect().width;
+          const sp = $("#ow-probe").getBoundingClientRect().width;
+
+          // Resting state: "eSIM that pays you back" optically centred.
+          const xF = Math.round((1920 - (wE + sp + wT)) / 2);
+          const xFTail = Math.round(xF + wE + sp);
+
+          // Opening state: "eSIM..." sits centre-left, with the whole typed-out
+          // phrase still inside a 120px safe margin.
+          let xA = Math.round(1920 * 0.4 - (wE + wD) / 2);
+          xA = Math.min(xA, Math.round(1800 - (wE + wD + sp + wT)));
+          xA = Math.max(xA, xF + 140);
+          const xADots = Math.round(xA + wE);
+          const xATail = Math.round(xA + wE + wD + sp);
+
+          // "eSIM" pops in with a spring, centre-left; the dots bounce after it
+          ft(esim, { autoAlpha: 0, scale: 0.4, x: xA, rotation: -6 }, { autoAlpha: 1, scale: 1, x: xA, rotation: 0, duration: 0.9, ease: "elastic.out(1, 0.5)" }, 38.05);
+          ft(dots, { autoAlpha: 0, scale: 0.4, x: xADots, y: 20 }, { autoAlpha: 1, scale: 1, x: xADots, y: 0, duration: 0.7, ease: "elastic.out(1, 0.55)" }, 38.3);
+
+          // ~1s later, "that pays you back" types in to its right
+          const typeStart = 39.3;
+          const typeEach = 0.075;
+          const tailChars = splitChars(tail);
+          const typeDur = tailChars.length * typeEach;
+
+          ft(tail, { x: xATail }, { x: xATail, duration: 0.04 }, typeStart - 0.1);
+          ft(tailChars, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.01, stagger: { each: typeEach } }, typeStart);
+          ft("#ow-caret", { autoAlpha: 1, x: xATail }, { autoAlpha: 1, x: xATail + wT, duration: typeDur, ease: "none" }, typeStart);
+          tl.to("#ow-caret", { autoAlpha: 0, duration: 0.16 }, typeStart + typeDur + 0.12);
+
+          // the dots drop out, then "eSIM" glides left and the phrase centres
+          tl.to(dots, { autoAlpha: 0, scale: 0.3, y: 24, duration: 0.26, ease: "back.in(2)" }, 41.18);
+          ft(esim, { x: xA }, { x: xF, duration: 0.82, ease: "power3.inOut" }, 41.42);
+          ft(tail, { x: xATail }, { x: xFTail, duration: 0.82, ease: "power3.inOut" }, 41.42);
+
+          // hold, then hand over to the logo
+          ft([esim, tail], { autoAlpha: 1, y: 0, filter: "blur(0px)" }, { autoAlpha: 0, y: -30, filter: "blur(8px)", duration: 0.45, ease: "power2.in" }, 42.9);
+          ft("#s7-logo-box", { autoAlpha: 0, scale: 0.8, y: 30 }, { autoAlpha: 1, scale: 1, y: 0, duration: 0.8, ease: "back.out(1.8)" }, 43.3);
+          ft("#s7-logo-glow", { autoAlpha: 0, scale: 0.7 }, { autoAlpha: 1, scale: 1.15, duration: 0.6, ease: "power2.out" }, 43.35);
+          ft("#s7-logo-glow", { autoAlpha: 1, scale: 1.15 }, { autoAlpha: 0.45, scale: 1.0, duration: 0.5, yoyo: true, repeat: 1, ease: "sine.inOut" }, 43.95);
+          sheen("#s7-sheen", 43.65, 0.8);
+          kin("#s7-sub .w", 43.95, { y: 30, rot: 3, skew: 6, stagger: 0.07, dur: 0.5 });
+          idle("#s7-logo-box", 44.2, 45, { s: 0.012, period: 1.6 });
+
+          window.__timelines = window.__timelines || {};
+          window.__timelines["main"] = tl;
+          if (typeof window.__hfForceTimelineRebind === "function") {
+            window.__hfForceTimelineRebind();
+          }
+        }
+
+        if (document.fonts && document.fonts.ready) {
+          document.fonts.ready.then(build);
+        } else {
+          build();
+        }
+      })();
+    </script>
+  </body>
+</html>
