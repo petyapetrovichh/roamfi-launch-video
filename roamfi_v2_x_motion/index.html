@@ -1403,7 +1403,7 @@
             <div class="pp-ic">P</div>
             <div class="body">
               <div class="nt">PayPal <span>now</span></div>
-              <div class="nb">You received <b id="notif-amt">+$3.22</b></div>
+              <div class="nb">You received&nbsp;<b id="notif-amt">+$3.22</b></div>
             </div>
           </div>
         </div>
@@ -1625,7 +1625,7 @@
         idle("#pill", b(19) + 0.7, b(51), { y: -6, period: 3.2 });
         // Camera goes tight inside the funds panel: pill darts off, returns as the panel leaves.
         out("#pill", b(51), { x: -520, rot: -10, scale: 0.7, blur: 6, dur: 0.36 });
-        fly("#pill", b(75), { x: -520, rot: -10, scale: 0.7, dur: 0.5, ease: "back.out(1.8)" });
+        fly("#pill", b(75), { x: -520, rot: -10, scale: 0.7, blur: 6, dur: 0.5, ease: "back.out(1.8)" });
         idle("#pill", b(75) + 0.5, b(92), { y: -6, period: 3.2 });
 
         // Morph SOMEONE → YOU on the phrase downbeat at 21.40.
@@ -1646,7 +1646,7 @@
 
         // Tight inside the withdraw panel: pill darts off, back for the sent scene.
         out("#pill", b(178), { x: -520, rot: -10, scale: 0.7, blur: 6, dur: 0.36 });
-        fly("#pill", b(188), { x: -520, rot: -10, scale: 0.7, dur: 0.55, ease: "back.out(1.8)" });
+        fly("#pill", b(188), { x: -520, rot: -10, scale: 0.7, blur: 6, dur: 0.55, ease: "back.out(1.8)" });
         idle("#pill", b(188) + 0.55, b(198), { y: -6, period: 3.2 });
         // Pill leaves with the sent scene.
         out("#pill", b(198), { x: -500, rot: -10, scale: 0.7, blur: 8, dur: 0.4 });
