@@ -1,0 +1,1968 @@
+<!doctype html>
+<html lang="en" data-resolution="landscape">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>RoamFi V2 — Launch</title>
+    <script src="assets/js/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Inter";
+        font-style: normal;
+        font-weight: 100 900;
+        font-display: block;
+        src: url("assets/fonts/Inter.woff2") format("woff2");
+      }
+
+      :root {
+        --bg: #eef3f6;
+        --card: #ffffff;
+        --ink: #0b1114;
+        --ink2: #38444b;
+        --muted: #5f6d76;
+        --faint: #74838d;
+        --line: #e2eaee;
+        --cyan: #05e3f7;
+        --cyan-soft: #d5fafe;
+        --cyan-deep: #04a6b6;
+        --green: #5fd89b;
+        --green-deep: #1f9c63;
+        --black: #0b0b0f;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--bg);
+      }
+
+      body {
+        font-family: "Inter", "Liberation Sans", sans-serif;
+        color: var(--ink);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      #root {
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--bg);
+      }
+
+      .clip {
+        position: absolute;
+        inset: 0;
+      }
+
+      /* ---------------------------------------------------------- backdrop */
+      #backdrop {
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(860px 620px at 82% 16%, rgba(5, 227, 247, 0.20), rgba(5, 227, 247, 0) 70%),
+          radial-gradient(720px 560px at 12% 88%, rgba(5, 227, 247, 0.13), rgba(5, 227, 247, 0) 72%),
+          linear-gradient(180deg, #f4f8fa 0%, #e9f0f4 100%);
+      }
+
+      #grain {
+        position: absolute;
+        inset: 0;
+        opacity: 0.45;
+        background-image:
+          linear-gradient(rgba(11, 17, 20, 0.028) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(11, 17, 20, 0.028) 1px, transparent 1px);
+        background-size: 80px 80px;
+      }
+
+      /* -------------------------------------------------------- role chip */
+      #role-chip {
+        position: absolute;
+        left: 150px;
+        top: 118px;
+        width: 214px;
+        height: 60px;
+        border-radius: 30px;
+        background: var(--black);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        opacity: 0;
+        visibility: hidden;
+        box-shadow: 0 14px 34px rgba(11, 17, 20, 0.18);
+      }
+
+      #role-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--cyan);
+        flex: none;
+      }
+
+      #role-window {
+        position: relative;
+        width: 120px;
+        height: 34px;
+      }
+
+      .role-word {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 34px;
+        line-height: 34px;
+        text-align: center;
+        color: #fff;
+        font-size: 25px;
+        font-weight: 800;
+        letter-spacing: 0.15em;
+      }
+
+      #role-flash {
+        position: absolute;
+        left: 140px;
+        top: 108px;
+        width: 234px;
+        height: 80px;
+        border-radius: 40px;
+        border: 3px solid var(--cyan);
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      /* ------------------------------------------------------------ type */
+      .h-xxl {
+        font-size: 104px;
+        font-weight: 800;
+        letter-spacing: -0.035em;
+        line-height: 1.08;
+      }
+
+      .h-xl {
+        font-size: 88px;
+        font-weight: 800;
+        letter-spacing: -0.032em;
+        line-height: 1.1;
+      }
+
+      .h-l {
+        font-size: 62px;
+        font-weight: 800;
+        letter-spacing: -0.028em;
+        line-height: 1.12;
+      }
+
+      .kicker {
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        color: var(--muted);
+        text-transform: uppercase;
+      }
+
+      .body-m {
+        font-size: 34px;
+        font-weight: 500;
+        color: var(--ink2);
+        line-height: 1.35;
+      }
+
+      .hl {
+        position: relative;
+        display: inline-block;
+      }
+
+      .hl-bar {
+        position: absolute;
+        left: -8px;
+        right: -8px;
+        bottom: 2px;
+        height: 15px;
+        border-radius: 6px;
+        background: var(--cyan);
+        transform-origin: left center;
+      }
+
+      /* ------------------------------------------------------- UI mockups */
+      .ui-card {
+        position: absolute;
+        background: var(--card);
+        border-radius: 40px;
+        box-shadow: 0 40px 90px rgba(11, 17, 20, 0.13), 0 4px 14px rgba(11, 17, 20, 0.05);
+        overflow: hidden;
+      }
+
+      .ui-panel {
+        position: absolute;
+        inset: 0;
+        padding: 44px 44px;
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .ui-title {
+        font-size: 40px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+
+      .ui-sub {
+        font-size: 22px;
+        font-weight: 500;
+        color: var(--muted);
+      }
+
+      .ui-label {
+        font-size: 19px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        color: var(--faint);
+        text-transform: uppercase;
+      }
+
+      .field {
+        position: relative;
+        height: 78px;
+        border-radius: 39px;
+        background: #f1f5f7;
+        border: 2px solid #f1f5f7;
+        display: flex;
+        align-items: center;
+        padding: 0 30px;
+        gap: 16px;
+      }
+
+      .field.focused {
+        border-color: var(--cyan);
+        background: #fbfeff;
+      }
+
+      .mag {
+        width: 26px;
+        height: 26px;
+        border: 3px solid #8d9ba4;
+        border-radius: 50%;
+        position: relative;
+        flex: none;
+      }
+
+      .mag::after {
+        content: "";
+        position: absolute;
+        right: -9px;
+        bottom: -7px;
+        width: 13px;
+        height: 3px;
+        background: #8d9ba4;
+        border-radius: 2px;
+        transform: rotate(45deg);
+      }
+
+      .field-text {
+        font-size: 28px;
+        font-weight: 600;
+        color: var(--ink);
+        white-space: nowrap;
+      }
+
+      .field-ph {
+        font-size: 28px;
+        font-weight: 500;
+        color: #7f8d95;
+      }
+
+      .caret {
+        position: absolute;
+        width: 3px;
+        height: 34px;
+        background: var(--cyan);
+        border-radius: 2px;
+      }
+
+      .row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 84px;
+        border-bottom: 2px solid var(--line);
+        padding: 0 14px;
+        border-radius: 16px;
+      }
+
+      .row-l {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        font-size: 27px;
+        font-weight: 600;
+      }
+
+      .chev {
+        width: 13px;
+        height: 13px;
+        border-right: 3px solid #b6c2c9;
+        border-top: 3px solid #b6c2c9;
+        transform: rotate(45deg);
+        flex: none;
+      }
+
+      .flag-us {
+        width: 38px;
+        height: 26px;
+        border-radius: 4px;
+        overflow: hidden;
+        flex: none;
+        position: relative;
+        background: repeating-linear-gradient(
+          180deg,
+          #c8102e 0 3.7px,
+          #ffffff 3.7px 7.4px
+        );
+        box-shadow: inset 0 0 0 1px rgba(11, 17, 20, 0.12);
+      }
+
+      .flag-us::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 17px;
+        height: 14px;
+        background: #0a3161;
+      }
+
+      .globe {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        border: 3px solid #9fb0b9;
+        flex: none;
+        position: relative;
+      }
+
+      .globe::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: -3px;
+        bottom: -3px;
+        width: 3px;
+        margin-left: -1.5px;
+        background: #9fb0b9;
+      }
+
+      .globe::after {
+        content: "";
+        position: absolute;
+        left: -3px;
+        right: -3px;
+        top: 50%;
+        height: 3px;
+        margin-top: -1.5px;
+        background: #9fb0b9;
+      }
+
+      .tabs {
+        display: flex;
+        height: 74px;
+        border-radius: 37px;
+        background: #e7eef1;
+        padding: 0;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .tab {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 23px;
+        font-weight: 700;
+        color: #6a7982;
+        position: relative;
+        z-index: 2;
+      }
+
+      .tab-pill {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 33.34%;
+        height: 74px;
+        border-radius: 37px;
+        background: var(--black);
+        z-index: 1;
+      }
+
+      .chips {
+        display: flex;
+        gap: 16px;
+      }
+
+      .chip {
+        flex: 1;
+        height: 72px;
+        border-radius: 36px;
+        background: #f1f5f7;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        font-weight: 700;
+        color: #6a7982;
+      }
+
+      .chip.on {
+        background: var(--cyan);
+        color: var(--ink);
+      }
+
+      .btn {
+        height: 88px;
+        border-radius: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 29px;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+      }
+
+      .btn-cyan {
+        background: var(--cyan);
+        color: var(--ink);
+      }
+
+      .btn-black {
+        background: var(--black);
+        color: #fff;
+      }
+
+      .btn-off {
+        background: #e3eaee;
+        color: #a9b6bd;
+      }
+
+      .conv {
+        height: 96px;
+        border-radius: 24px;
+        border: 2px solid var(--line);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 28px;
+        font-size: 30px;
+        font-weight: 800;
+      }
+
+      .coin {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: var(--ink);
+        color: #fff;
+        font-size: 22px;
+        font-weight: 800;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: none;
+      }
+
+      .wifi {
+        width: 34px;
+        height: 24px;
+        flex: none;
+        position: relative;
+      }
+
+      .wifi i {
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        border: 3px solid var(--ink);
+        border-bottom-color: transparent;
+        border-left-color: transparent;
+        border-right-color: transparent;
+        border-radius: 50%;
+      }
+
+      .wifi i:nth-child(1) {
+        width: 10px;
+        height: 10px;
+        margin-left: -5px;
+      }
+
+      .wifi i:nth-child(2) {
+        width: 22px;
+        height: 22px;
+        margin-left: -11px;
+      }
+
+      .sum-row {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        padding: 22px 0;
+        border-bottom: 2px solid var(--line);
+      }
+
+      .sum-k {
+        font-size: 27px;
+        font-weight: 600;
+      }
+
+      .sum-v {
+        font-size: 29px;
+        font-weight: 800;
+      }
+
+      .spinner {
+        width: 130px;
+        height: 130px;
+        border-radius: 34px;
+        background: #3c4449;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .spin-ring {
+        width: 62px;
+        height: 62px;
+        border-radius: 50%;
+        border: 7px solid rgba(255, 255, 255, 0.28);
+        border-top-color: #ffffff;
+      }
+
+      .check-circle {
+        width: 138px;
+        height: 138px;
+        border-radius: 50%;
+        background: var(--green);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .check-mark {
+        width: 62px;
+        height: 34px;
+        border-left: 10px solid #0c3a26;
+        border-bottom: 10px solid #0c3a26;
+        border-radius: 3px;
+        transform: rotate(-45deg);
+        margin-top: -12px;
+      }
+
+      /* tap cursor */
+      .cursor {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 46px;
+        height: 46px;
+        margin: -23px 0 0 -23px;
+        border-radius: 50%;
+        background: rgba(11, 17, 20, 0.30);
+        border: 3px solid rgba(11, 17, 20, 0.55);
+        opacity: 0;
+        visibility: hidden;
+        z-index: 40;
+      }
+
+      .ripple {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 120px;
+        height: 120px;
+        margin: -60px 0 0 -60px;
+        border-radius: 50%;
+        border: 4px solid var(--cyan);
+        opacity: 0;
+        visibility: hidden;
+        z-index: 39;
+      }
+
+      /* --------------------------------------------------------- diagram */
+      .node {
+        position: absolute;
+        border-radius: 22px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 0 24px;
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .node .nt {
+        font-size: 25px;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        white-space: nowrap;
+      }
+
+      .node .ns {
+        font-size: 18px;
+        font-weight: 500;
+        margin-top: 3px;
+        white-space: nowrap;
+      }
+
+      .node-dark {
+        background: var(--black);
+        color: #fff;
+      }
+
+      .node-dark .ns {
+        color: rgba(255, 255, 255, 0.76);
+      }
+
+      .node-grey {
+        background: #e4ebef;
+        color: var(--ink2);
+      }
+
+      .node-grey .ns {
+        color: #53616a;
+      }
+
+      .node-cyan {
+        background: var(--cyan);
+        color: var(--ink);
+      }
+
+      .node-cyan .ns {
+        color: rgba(11, 17, 20, 0.8);
+      }
+
+      .node-you {
+        background: #fff;
+        color: var(--ink);
+        border: 3px solid var(--cyan);
+        align-items: center;
+      }
+
+      .flow-svg {
+        position: absolute;
+        left: 0;
+        top: 0;
+      }
+
+      .flow-line {
+        fill: none;
+        stroke: #bccbd3;
+        stroke-width: 3;
+        stroke-linecap: round;
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .flow-comet {
+        fill: none;
+        stroke: var(--cyan-deep);
+        stroke-width: 7;
+        stroke-linecap: round;
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .pct {
+        position: absolute;
+        font-size: 22px;
+        font-weight: 800;
+        color: #55636c;
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      /* --------------------------------------------------------- odometer */
+      .amount {
+        display: flex;
+        align-items: flex-start;
+        font-size: 96px;
+        font-weight: 800;
+        letter-spacing: -0.04em;
+        line-height: 108px;
+        height: 108px;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .odo {
+        position: relative;
+        display: inline-block;
+        width: 57px;
+        height: 108px;
+        overflow: hidden;
+      }
+
+      .strip {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+      }
+
+      .strip span {
+        display: block;
+        height: 108px;
+        line-height: 108px;
+        text-align: center;
+      }
+
+      .plus-chip {
+        display: inline-flex;
+        align-items: center;
+        height: 46px;
+        padding: 0 18px;
+        border-radius: 23px;
+        background: #e2f7ec;
+        color: var(--green-deep);
+        font-size: 24px;
+        font-weight: 800;
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      /* ---------------------------------------------------------- paypal */
+      .pp-mark {
+        width: 62px;
+        height: 62px;
+        border-radius: 50%;
+        background: #eef2f7;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: none;
+      }
+
+      .pp-p {
+        font-size: 36px;
+        font-weight: 800;
+        color: #17295c;
+        font-style: italic;
+        line-height: 1;
+      }
+
+      /* ----------------------------------------------------------- outro */
+      #ow-wrap {
+        position: absolute;
+        left: 0;
+        top: 402px;
+        width: 1920px;
+        height: 168px;
+      }
+
+      #ow-wrap span.word {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 168px;
+        line-height: 168px;
+        white-space: nowrap;
+        font-size: 92px;
+        font-weight: 900;
+        letter-spacing: -0.04em;
+        transform-origin: left center;
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      #ow-wrap span#ow-tail.word {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .ch {
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      #ow-caret {
+        position: absolute;
+        left: 0;
+        top: 44px;
+        width: 5px;
+        height: 82px;
+        border-radius: 3px;
+        background: var(--cyan-deep);
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      #ow-probe {
+        position: absolute;
+        left: -4000px;
+        top: 0;
+        font-size: 92px;
+        font-weight: 900;
+        letter-spacing: -0.04em;
+        white-space: pre;
+      }
+
+      #s7-logo-wrap {
+        position: absolute;
+        left: 0;
+        top: 392px;
+        width: 1920px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 46px;
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      #s7-logo {
+        width: 640px;
+        height: auto;
+        display: block;
+      }
+
+      #s7-sub {
+        font-size: 34px;
+        font-weight: 600;
+        color: var(--ink2);
+        letter-spacing: 0.02em;
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      /* helper: pre-animation hidden state */
+      .pre {
+        opacity: 0;
+        visibility: hidden;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="45"
+      data-width="1920"
+      data-height="1080"
+      data-fps="30">
+      <div id="backdrop"><div id="grain"></div></div>
+
+      <!-- ===================== persistent role label ===================== -->
+      <div id="role-chip">
+        <div id="role-dot"></div>
+        <div id="role-window">
+          <span id="role-buyer" class="role-word">BUYER</span>
+          <span id="role-you" class="role-word pre">YOU</span>
+        </div>
+      </div>
+      <div id="role-flash"></div>
+
+      <!-- ========================= 1 · HOOK (0–4) ======================== -->
+      <section id="s1-hook" class="clip" data-start="0" data-duration="4" data-track-index="1">
+        <div style="position: absolute; left: 0; top: 392px; width: 1920px; text-align: center">
+          <div id="s1-l1" class="h-xxl pre">Someone, somewhere,</div>
+          <div id="s1-l2" class="h-xxl pre" style="margin-top: 18px">
+            just bought an <span class="hl">eSIM<i id="s1-bar" class="hl-bar"></i></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================== 2 · BUYER FLOW (4–14) ==================== -->
+      <section id="s2-buyer" class="clip" data-start="4" data-duration="10" data-track-index="2">
+        <div style="position: absolute; left: 150px; top: 252px; width: 840px">
+          <div id="s2-kicker" class="kicker pre">A regular purchase</div>
+          <div style="position: relative; height: 300px; margin-top: 28px">
+            <div id="s2-cap1" class="h-l pre" style="position: absolute; left: 0; top: 0; width: 840px">
+              Picks a destination.
+            </div>
+            <div id="s2-cap2" class="h-l pre" style="position: absolute; left: 0; top: 0; width: 840px">
+              Adds $20.
+            </div>
+            <div id="s2-cap3" class="h-l pre" style="position: absolute; left: 0; top: 0; width: 840px">
+              Pays. Done.
+            </div>
+          </div>
+          <div style="display: flex; gap: 14px; margin-top: 12px">
+            <div id="s2-d1" class="pre" style="width: 86px; height: 8px; border-radius: 4px; background: var(--cyan)"></div>
+            <div id="s2-d2" class="pre" style="width: 86px; height: 8px; border-radius: 4px; background: var(--cyan)"></div>
+            <div id="s2-d3" class="pre" style="width: 86px; height: 8px; border-radius: 4px; background: var(--cyan)"></div>
+          </div>
+        </div>
+
+        <div id="s2-card" class="ui-card pre" style="left: 1040px; top: 128px; width: 700px; height: 824px">
+          <!-- A · search + results -->
+          <div id="s2-pA" class="ui-panel">
+            <div class="ui-title">Select Your Destination</div>
+            <div id="s2-field" class="field" style="margin-top: 34px">
+              <div class="mag"></div>
+              <div style="position: relative; flex: 1">
+                <div id="s2-ph" class="field-ph">Where do you want to go?</div>
+                <div
+                  id="s2-typed"
+                  class="field-text"
+                  style="position: absolute; left: 0; top: 50%; margin-top: -19px">United States</div>
+                <div id="s2-caret" class="caret" style="left: 0; top: 50%; margin-top: -17px"></div>
+              </div>
+            </div>
+            <div id="s2-results" class="pre" style="margin-top: 36px">
+              <div class="ui-label" style="margin-bottom: 10px">Results</div>
+              <div id="s2-row-us" class="row">
+                <div class="row-l"><span class="flag-us"></span>United States</div>
+                <div class="chev"></div>
+              </div>
+              <div class="row">
+                <div class="row-l"><span class="globe"></span>North America</div>
+                <div class="chev"></div>
+              </div>
+              <div class="row" style="border-bottom: none">
+                <div class="row-l"><span class="globe"></span>Global</div>
+                <div class="chev"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- B · add funds -->
+          <div id="s2-pB" class="ui-panel">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 14px">
+              <span class="flag-us"></span>
+              <span style="font-size: 30px; font-weight: 800">United States</span>
+            </div>
+            <div class="tabs" style="margin-top: 30px">
+              <div id="s2-tabpill" class="tab-pill"></div>
+              <div id="s2-tab1" class="tab" style="color: #ffffff">Data</div>
+              <div id="s2-tab2" class="tab">Data and calls</div>
+              <div id="s2-tab3" class="tab">Add Funds</div>
+            </div>
+            <div id="s2-fundsbody" class="pre" style="margin-top: 34px">
+              <div class="ui-sub">Add funds, pay for what you use.</div>
+              <div
+                style="
+                  margin-top: 22px;
+                  height: 108px;
+                  border-radius: 22px;
+                  background: #f1f5f7;
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+                  padding: 0 30px;
+                ">
+                <span style="font-size: 54px; font-weight: 700">20</span>
+                <span style="font-size: 30px; font-weight: 600; color: var(--faint)">$</span>
+              </div>
+              <div class="chips" style="margin-top: 22px">
+                <div class="chip">$5</div>
+                <div id="s2-chip20" class="chip">$20</div>
+                <div class="chip">$50</div>
+                <div class="chip">$100</div>
+              </div>
+              <div
+                style="
+                  margin-top: 26px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  gap: 14px;
+                  font-size: 22px;
+                  font-weight: 600;
+                  color: var(--muted);
+                ">
+                Data in United States
+                <span
+                  style="
+                    background: #f1f5f7;
+                    border-radius: 12px;
+                    padding: 6px 14px;
+                    color: var(--ink2);
+                    font-weight: 700;
+                  ">$2.33/GB</span>
+              </div>
+              <div id="s2-conv" class="conv pre" style="margin-top: 24px">
+                <span style="display: flex; align-items: center; gap: 12px"><span class="coin">$</span>20 USD</span>
+                <span style="color: #b6c2c9; font-size: 34px">&#8594;</span>
+                <span style="display: flex; align-items: center; gap: 12px"><span class="wifi"><i></i><i></i></span>8.58GB</span>
+              </div>
+              <div id="s2-choose" class="btn btn-cyan pre" style="margin-top: 26px">Choose</div>
+            </div>
+          </div>
+
+          <!-- C · purchase summary -->
+          <div id="s2-pC" class="ui-panel">
+            <div class="ui-title" style="text-align: center">Purchase Summary</div>
+            <div style="margin-top: 30px">
+              <div class="sum-row">
+                <div>
+                  <div class="sum-k">20 USD</div>
+                  <div class="ui-sub" style="margin-top: 4px">No Expiration, Valid Globally</div>
+                </div>
+                <div class="sum-v">$20</div>
+              </div>
+              <div class="sum-row">
+                <div>
+                  <div class="sum-k">Service Fee</div>
+                  <div class="ui-sub" style="margin-top: 4px">One-time Fee</div>
+                </div>
+                <div class="sum-v" style="color: var(--faint)">&#8212;</div>
+              </div>
+              <div class="sum-row" style="border-bottom: none">
+                <div class="sum-k" style="font-size: 34px; font-weight: 800">Total</div>
+                <div class="sum-v" style="font-size: 36px">$20</div>
+              </div>
+            </div>
+            <div class="ui-label" style="margin-top: 18px">You will receive</div>
+            <div class="conv" style="margin-top: 14px">
+              <span style="display: flex; align-items: center; gap: 12px"><span class="coin">$</span>20 USD</span>
+              <span style="color: #b6c2c9; font-size: 34px">&#8594;</span>
+              <span style="display: flex; align-items: center; gap: 12px"><span class="wifi"><i></i><i></i></span>8.58GB</span>
+            </div>
+            <div
+              id="s2-paybtn"
+              class="btn btn-black"
+              style="position: absolute; left: 44px; right: 44px; bottom: 48px">
+              Continue to Payment
+            </div>
+          </div>
+
+          <!-- D · processing -->
+          <div id="s2-pD" class="ui-panel" style="display: flex; flex-direction: column; align-items: center; justify-content: center">
+            <div class="spinner"><div id="s2-spin" class="spin-ring"></div></div>
+            <div style="margin-top: 40px; font-size: 36px; font-weight: 800">Processing Payment</div>
+            <div class="ui-sub" style="margin-top: 12px">Confirming your payment&hellip;</div>
+          </div>
+
+          <!-- E · success -->
+          <div id="s2-pE" class="ui-panel" style="display: flex; flex-direction: column; align-items: center; justify-content: center">
+            <div id="s2-check" class="check-circle pre"><div class="check-mark"></div></div>
+            <div id="s2-done" class="pre" style="margin-top: 42px; font-size: 42px; font-weight: 800">
+              Purchase complete
+            </div>
+            <div id="s2-done2" class="ui-sub pre" style="margin-top: 14px; font-size: 26px">
+              20 USD &middot; 8.58 GB live
+            </div>
+          </div>
+
+          <div id="s2-ripple" class="ripple"></div>
+          <div id="s2-cursor" class="cursor"></div>
+        </div>
+      </section>
+
+      <!-- ================= 3 · BUYER → YOU SWITCH (14–18) ================ -->
+      <section id="s3-switch" class="clip" data-start="14" data-duration="4" data-track-index="3">
+        <div style="position: absolute; left: 0; top: 236px; width: 1920px; text-align: center">
+          <div id="s3-l1" class="h-xl pre">You bought once.</div>
+          <div id="s3-l2" class="h-xl pre" style="margin-top: 14px; color: var(--muted)">Weeks ago.</div>
+        </div>
+
+        <div
+          id="s3-n1"
+          class="ui-card pre"
+          style="left: 250px; top: 604px; width: 450px; height: 158px; padding: 30px 34px">
+          <div class="ui-label">Their purchase</div>
+          <div style="margin-top: 14px; display: flex; align-items: center; gap: 14px">
+            <span class="coin" style="width: 40px; height: 40px; font-size: 25px">$</span>
+            <span style="font-size: 44px; font-weight: 800">20 eSIM</span>
+          </div>
+        </div>
+
+        <div
+          id="s3-n2"
+          class="ui-card pre"
+          style="left: 1220px; top: 604px; width: 450px; height: 158px; padding: 30px 34px">
+          <div class="ui-label">Your revenue sharing</div>
+          <div style="margin-top: 10px; font-size: 56px; font-weight: 800; letter-spacing: -0.03em">
+            $4.19
+          </div>
+        </div>
+
+        <svg class="flow-svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+          <path id="s3-path" class="flow-line" d="M700,683 C830,566 1090,566 1220,683" />
+          <path
+            id="s3-comet"
+            class="flow-comet"
+            stroke-dasharray="54 3000"
+            d="M700,683 C830,566 1090,566 1220,683"
+          />
+        </svg>
+
+        <div id="s3-cap" class="body-m pre" style="position: absolute; left: 0; top: 852px; width: 1920px; text-align: center">
+          Their purchase pays into your balance.
+        </div>
+      </section>
+
+      <!-- =================== 4 · REVENUE SHARING (18–27) ================= -->
+      <section id="s4-revenue" class="clip" data-start="18" data-duration="9" data-track-index="4">
+        <div
+          id="s4-card"
+          class="ui-card pre"
+          style="left: 150px; top: 232px; width: 600px; height: 384px; padding: 40px 42px">
+          <div class="ui-label">Revenue sharing balance</div>
+          <div style="display: flex; align-items: center; gap: 22px; margin-top: 14px">
+            <div class="amount">
+              <span>$</span><span>4</span><span>.</span>
+              <span class="odo"><span id="odo-t" class="strip"></span></span>
+              <span class="odo"><span id="odo-h" class="strip"></span></span>
+            </div>
+            <div id="s4-plus" class="plus-chip">+$0.01</div>
+          </div>
+          <div style="height: 2px; background: var(--line); margin-top: 26px"></div>
+          <div style="display: flex; gap: 46px; margin-top: 26px">
+            <div>
+              <div style="font-size: 30px; font-weight: 800">82.25%</div>
+              <div class="ui-sub" style="font-size: 20px; margin-top: 2px">Current weight</div>
+            </div>
+            <div>
+              <div style="font-size: 30px; font-weight: 800">131</div>
+              <div class="ui-sub" style="font-size: 20px; margin-top: 2px">Eligible purchases</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="s4-copy" class="pre" style="position: absolute; left: 150px; top: 660px; width: 660px">
+          <div style="font-size: 42px; font-weight: 800; letter-spacing: -0.025em; line-height: 1.22">
+            Get up to 50% of RoamFi revenue from every purchase made by others.
+          </div>
+        </div>
+
+        <div
+          id="s4-auto"
+          class="pre"
+          style="
+            position: absolute;
+            left: 150px;
+            top: 872px;
+            height: 62px;
+            display: inline-flex;
+            align-items: center;
+            padding: 0 30px;
+            border-radius: 31px;
+            background: var(--cyan-soft);
+            color: #04606b;
+            font-size: 25px;
+            font-weight: 800;
+          ">
+          Automatic &middot; Instant &middot; No action needed
+        </div>
+
+        <div id="s4-flow" style="position: absolute; left: 800px; top: 160px; width: 1000px; height: 780px">
+          <div id="s4-ftitle" class="pre">
+            <div style="font-size: 34px; font-weight: 800; letter-spacing: -0.02em">How the money flows</div>
+            <div class="ui-sub" style="margin-top: 6px; font-size: 22px">Every eSIM purchase, split automatically</div>
+          </div>
+
+          <svg class="flow-svg" width="1000" height="780" viewBox="0 0 1000 780">
+            <path id="p1" class="flow-line" d="M160,165 C215,165 215,142 270,142" />
+            <path id="p2" class="flow-line" d="M160,165 C215,165 215,318 270,318" />
+            <path id="p3" class="flow-line" d="M650,318 C696,318 700,272 740,272" />
+            <path id="p4" class="flow-line" d="M650,318 C666,318 666,478 670,478" />
+            <path id="p5" class="flow-line" d="M835,526 C835,576 820,572 820,620" />
+            <path id="c2" class="flow-comet" stroke-dasharray="40 3000" d="M160,165 C215,165 215,318 270,318" />
+            <path id="c4" class="flow-comet" stroke-dasharray="40 3000" d="M650,318 C666,318 666,478 670,478" />
+            <path id="c5" class="flow-comet" stroke-dasharray="40 3000" d="M835,526 C835,576 820,572 820,620" />
+          </svg>
+
+          <div id="n-buyer" class="node node-dark" style="left: 0; top: 130px; width: 160px; height: 70px; align-items: center">
+            <div class="nt" style="letter-spacing: 0.1em">BUYER</div>
+          </div>
+          <div id="n-cost" class="node node-grey" style="left: 270px; top: 100px; width: 330px; height: 84px">
+            <div class="nt">eSIM provider cost</div>
+            <div class="ns">Deducted first</div>
+          </div>
+          <div id="n-rev" class="node node-dark" style="left: 270px; top: 270px; width: 380px; height: 96px">
+            <div class="nt">RoamFi business revenue</div>
+            <div class="ns">Price minus provider cost</div>
+          </div>
+          <div id="n-co" class="node node-dark" style="left: 740px; top: 230px; width: 250px; height: 84px">
+            <div class="nt">RoamFi</div>
+            <div class="ns">Company revenue</div>
+          </div>
+          <div id="n-pool" class="node node-cyan" style="left: 670px; top: 430px; width: 330px; height: 96px">
+            <div class="nt">Revenue sharing pool</div>
+            <div class="ns">Shared with past buyers</div>
+          </div>
+          <div id="n-you" class="node node-you" style="left: 740px; top: 620px; width: 160px; height: 72px">
+            <div class="nt" style="letter-spacing: 0.1em">YOU</div>
+          </div>
+
+          <div id="pct-a" class="pct" style="left: 664px; top: 240px">50%</div>
+          <div id="pct-b" class="pct" style="left: 614px; top: 396px">50%</div>
+        </div>
+      </section>
+
+      <!-- ==================== 5 · KINETIC TYPE (27–32) =================== -->
+      <section id="s5-kinetic" class="clip" data-start="27" data-duration="5" data-track-index="5">
+        <div style="position: absolute; left: 0; top: 296px; width: 1920px; text-align: center">
+          <div id="s5-l1" class="pre" style="position: relative; display: inline-block">
+            <span class="h-xl" style="color: var(--muted)">No referral link.</span>
+            <i
+              id="s5-s1"
+              style="
+                position: absolute;
+                left: -10px;
+                right: -10px;
+                top: 52%;
+                height: 8px;
+                border-radius: 4px;
+                background: var(--muted);
+                transform-origin: left center;
+              "></i>
+          </div>
+        </div>
+        <div style="position: absolute; left: 0; top: 424px; width: 1920px; text-align: center">
+          <div id="s5-l2" class="pre" style="position: relative; display: inline-block">
+            <span class="h-xl" style="color: var(--muted)">No sign-up.</span>
+            <i
+              id="s5-s2"
+              style="
+                position: absolute;
+                left: -10px;
+                right: -10px;
+                top: 52%;
+                height: 8px;
+                border-radius: 4px;
+                background: var(--muted);
+                transform-origin: left center;
+              "></i>
+          </div>
+        </div>
+        <div style="position: absolute; left: 0; top: 588px; width: 1920px; text-align: center">
+          <div id="s5-l3" class="pre" style="display: inline-block">
+            <span class="h-xl" style="font-size: 96px">Just buy once &mdash; earn for </span><span class="hl"><span class="h-xl" style="font-size: 96px">365 days</span><i id="s5-bar" class="hl-bar" style="height: 16px; bottom: -10px"></i></span><span class="h-xl" style="font-size: 96px">.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== 6 · WITHDRAW (32–38) ======================= -->
+      <section id="s6-withdraw" class="clip" data-start="32" data-duration="6" data-track-index="6">
+        <div id="s6-head" class="pre" style="position: absolute; left: 140px; top: 330px; width: 420px">
+          <div style="font-size: 66px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.08">
+            Cash out to PayPal.
+          </div>
+          <div class="ui-sub" style="margin-top: 22px; font-size: 28px">Instant transfer.</div>
+        </div>
+
+        <div id="s6-card" class="ui-card pre" style="left: 600px; top: 130px; width: 720px; height: 820px">
+          <!-- A · balance + withdraw -->
+          <div id="s6-pA" class="ui-panel" style="display: flex; flex-direction: column; justify-content: center">
+            <div class="ui-label">Revenue sharing balance</div>
+            <div style="font-size: 104px; font-weight: 800; letter-spacing: -0.04em; margin-top: 10px">
+              $4.22
+            </div>
+            <div id="s6-wbtn" class="btn btn-cyan" style="margin-top: 44px">Withdraw</div>
+          </div>
+
+          <!-- B · withdraw sheet -->
+          <div id="s6-pB" class="ui-panel">
+            <div style="width: 96px; height: 7px; border-radius: 4px; background: #dbe4e9; margin: 0 auto 30px"></div>
+            <div class="ui-label">From</div>
+            <div
+              style="
+                margin-top: 12px;
+                height: 92px;
+                border-radius: 22px;
+                border: 2px solid var(--line);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 26px;
+              ">
+              <span style="display: flex; align-items: center; gap: 16px">
+                <span
+                  style="
+                    width: 34px;
+                    height: 34px;
+                    border-radius: 50%;
+                    background: var(--green);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                  "><i
+                    style="
+                      display: block;
+                      width: 15px;
+                      height: 8px;
+                      border-left: 4px solid #0c3a26;
+                      border-bottom: 4px solid #0c3a26;
+                      transform: rotate(-45deg);
+                      margin-top: -4px;
+                    "></i></span>
+                <span style="font-size: 26px; font-weight: 600">Revenue sharing balance</span>
+              </span>
+              <span style="font-size: 27px; font-weight: 800">4.22</span>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 32px">
+              <span class="ui-label">Amount</span>
+              <span class="ui-sub" style="font-size: 20px">Available: 4.22</span>
+            </div>
+            <div
+              id="s6-amtfield"
+              style="
+                margin-top: 12px;
+                height: 100px;
+                border-radius: 24px;
+                background: #f1f5f7;
+                border: 2px solid #f1f5f7;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 28px;
+              ">
+              <span style="display: flex; align-items: baseline; gap: 12px; position: relative">
+                <span style="font-size: 34px; font-weight: 700; color: var(--faint)">$</span>
+                <span id="s6-amt" style="font-size: 42px; font-weight: 800; letter-spacing: -0.02em">3.22</span>
+                <span id="s6-amtph" style="font-size: 42px; font-weight: 700; color: #93a1a9">0.00</span>
+                <span id="s6-amtcaret" class="caret" style="left: 34px; top: -2px; height: 44px"></span>
+              </span>
+              <span style="font-size: 26px; font-weight: 800; color: var(--cyan-deep)">MAX</span>
+            </div>
+
+            <div class="ui-label" style="margin-top: 32px">To</div>
+            <div
+              style="
+                margin-top: 12px;
+                border-radius: 24px;
+                border: 2px solid var(--line);
+                padding: 26px;
+                display: flex;
+                align-items: center;
+                gap: 20px;
+              ">
+              <span class="pp-mark"><span class="pp-p">P</span></span>
+              <span>
+                <span style="display: block; font-size: 30px; font-weight: 800">PayPal</span>
+                <span class="ui-sub" style="font-size: 20px">Instant transfer</span>
+              </span>
+            </div>
+
+            <div
+              id="s6-confirm"
+              class="btn btn-off"
+              style="position: absolute; left: 44px; right: 44px; bottom: 48px">
+              Confirm Withdraw
+            </div>
+          </div>
+
+          <!-- C · sent -->
+          <div id="s6-pC" class="ui-panel" style="display: flex; flex-direction: column; align-items: center; justify-content: center">
+            <div id="s6-check" class="check-circle pre"><div class="check-mark"></div></div>
+            <div id="s6-sent" class="pre" style="margin-top: 42px; font-size: 42px; font-weight: 800">
+              Withdrawal sent
+            </div>
+            <div id="s6-sent2" class="ui-sub pre" style="margin-top: 14px; font-size: 26px">
+              $3.22 to PayPal
+            </div>
+          </div>
+
+          <div id="s6-ripple" class="ripple"></div>
+          <div id="s6-cursor" class="cursor"></div>
+        </div>
+
+        <div
+          id="s6-toast"
+          class="ui-card pre"
+          style="left: 1396px; top: 434px; width: 404px; height: 196px; padding: 34px">
+          <div style="display: flex; align-items: center; gap: 18px">
+            <span class="pp-mark"><span class="pp-p">P</span></span>
+            <span>
+              <span style="display: block; font-size: 24px; font-weight: 700; color: var(--muted)">PayPal</span>
+              <span style="display: block; font-size: 22px; font-weight: 500; color: var(--faint)">Instant transfer</span>
+            </span>
+          </div>
+          <div style="margin-top: 22px; font-size: 54px; font-weight: 800; color: var(--green-deep); letter-spacing: -0.03em">
+            +$3.22
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================== 7 · OUTRO (38–45) ======================== -->
+      <section id="s7-outro" class="clip" data-start="38" data-duration="7" data-track-index="7">
+        <div id="ow-wrap">
+          <span id="ow-esim" class="word">eSIM</span>
+          <span id="ow-dots" class="word">...</span>
+          <span id="ow-tail" class="word">that pays you back</span>
+          <span id="ow-caret"></span>
+          <span id="ow-probe">&nbsp;</span>
+        </div>
+
+        <div id="s7-logo-wrap">
+          <img id="s7-logo" src="assets/img/roamfi-logo.png" alt="RoamFi" />
+          <div id="s7-sub">roamfi.net &middot; 200+ destinations</div>
+        </div>
+      </section>
+
+      <!-- ========================== AUDIO BED ============================ -->
+      <audio id="bgm" src="assets/audio/bgm-roamfi.mp3" data-start="0" data-duration="45" data-track-index="20" data-volume="0.38"></audio>
+
+      <audio id="sfx-s1-in" src="assets/sfx/whoosh-short.mp3" data-start="0.05" data-duration="0.57" data-track-index="21" data-volume="0.45"></audio>
+      <audio id="sfx-buyer-pop" src="assets/sfx/pop.mp3" data-start="2.6" data-duration="0.72" data-track-index="22" data-volume="0.65"></audio>
+
+      <audio id="sfx-s2-in" src="assets/sfx/whoosh.mp3" data-start="4" data-duration="0.57" data-track-index="23" data-volume="0.5"></audio>
+      <audio id="sfx-tap-search" src="assets/sfx/click.mp3" data-start="4.7" data-duration="0.37" data-track-index="24" data-volume="0.75"></audio>
+      <audio id="sfx-typing-dest" src="assets/sfx/typing.mp3" data-start="5" data-duration="1.05" data-track-index="25" data-volume="0.5"></audio>
+      <audio id="sfx-tap-us" src="assets/sfx/click.mp3" data-start="7" data-duration="0.37" data-track-index="26" data-volume="0.75"></audio>
+      <audio id="sfx-tap-tab" src="assets/sfx/click-soft.mp3" data-start="7.75" data-duration="0.37" data-track-index="27" data-volume="0.75"></audio>
+      <audio id="sfx-tap-20" src="assets/sfx/click-soft.mp3" data-start="8.3" data-duration="0.37" data-track-index="28" data-volume="0.75"></audio>
+      <audio id="sfx-tap-choose" src="assets/sfx/click.mp3" data-start="9.35" data-duration="0.37" data-track-index="29" data-volume="0.75"></audio>
+      <audio id="sfx-tap-pay" src="assets/sfx/click.mp3" data-start="10.55" data-duration="0.37" data-track-index="30" data-volume="0.85"></audio>
+      <audio id="sfx-success" src="assets/sfx/chime.mp3" data-start="12.2" data-duration="1.9" data-track-index="31" data-volume="0.8"></audio>
+
+      <audio id="sfx-s3-in" src="assets/sfx/whoosh.mp3" data-start="14" data-duration="0.57" data-track-index="32" data-volume="0.5"></audio>
+      <audio id="sfx-switch" src="assets/sfx/ping.mp3" data-start="14.8" data-duration="1.32" data-track-index="33" data-volume="0.55"></audio>
+      <audio id="sfx-flow-land" src="assets/sfx/pop.mp3" data-start="16.85" data-duration="0.72" data-track-index="34" data-volume="0.5"></audio>
+
+      <audio id="sfx-s4-in" src="assets/sfx/whoosh-short.mp3" data-start="18" data-duration="0.57" data-track-index="35" data-volume="0.42"></audio>
+      <audio id="sfx-tick" src="assets/sfx/ping.mp3" data-start="21.85" data-duration="1.32" data-track-index="36" data-volume="0.6"></audio>
+      <audio id="sfx-auto" src="assets/sfx/pop.mp3" data-start="24" data-duration="0.72" data-track-index="37" data-volume="0.5"></audio>
+
+      <audio id="sfx-k1" src="assets/sfx/whoosh-short.mp3" data-start="27.2" data-duration="0.57" data-track-index="38" data-volume="0.5"></audio>
+      <audio id="sfx-k2" src="assets/sfx/whoosh-short.mp3" data-start="28.1" data-duration="0.57" data-track-index="39" data-volume="0.5"></audio>
+      <audio id="sfx-k3" src="assets/sfx/impact-bass-1.mp3" data-start="29.2" data-duration="2.1" data-track-index="40" data-volume="0.5"></audio>
+
+      <audio id="sfx-s6-in" src="assets/sfx/whoosh-short.mp3" data-start="32" data-duration="0.57" data-track-index="41" data-volume="0.42"></audio>
+      <audio id="sfx-tap-wd" src="assets/sfx/click.mp3" data-start="32.6" data-duration="0.37" data-track-index="42" data-volume="0.8"></audio>
+      <audio id="sfx-sheet" src="assets/sfx/whoosh-short.mp3" data-start="32.95" data-duration="0.57" data-track-index="43" data-volume="0.5"></audio>
+      <audio id="sfx-typing-amt" src="assets/sfx/typing.mp3" data-start="33.85" data-duration="0.8" data-track-index="44" data-volume="0.45"></audio>
+      <audio id="sfx-tap-conf" src="assets/sfx/click.mp3" data-start="35.55" data-duration="0.37" data-track-index="45" data-volume="0.85"></audio>
+      <audio id="sfx-payout" src="assets/sfx/notification.mp3" data-start="36.1" data-duration="1.9" data-track-index="46" data-volume="0.8"></audio>
+
+      <audio id="sfx-outro-pop" src="assets/sfx/pop.mp3" data-start="38.05" data-duration="0.72" data-track-index="47" data-volume="0.65"></audio>
+      <audio id="sfx-outro-type" src="assets/sfx/typing.mp3" data-start="39.3" data-duration="1.4" data-track-index="48" data-volume="0.45"></audio>
+      <audio id="sfx-outro-glide" src="assets/sfx/whoosh-short.mp3" data-start="41.4" data-duration="0.57" data-track-index="49" data-volume="0.42"></audio>
+      <audio id="sfx-logo" src="assets/sfx/sparkle.mp3" data-start="43.3" data-duration="1.6" data-track-index="50" data-volume="0.6"></audio>
+    </div>
+
+    <script>
+      (function () {
+        "use strict";
+
+        const $ = (s) => document.querySelector(s);
+
+        /* ------------------------------------------------ small utilities */
+
+        // Split an element's text into per-character spans. `.ch` is hidden in
+        // CSS, so the source text never flashes before its typewriter runs.
+        function splitChars(el) {
+          const text = el.textContent;
+          el.textContent = "";
+          const out = [];
+          for (const c of text) {
+            const s = document.createElement("span");
+            s.className = "ch";
+            s.textContent = c === " " ? " " : c;
+            el.appendChild(s);
+            out.push(s);
+          }
+          return out;
+        }
+
+        // A two-digit reel for the balance odometer: the digit it starts on,
+        // then the one it rolls to.
+        function buildStrip(el, digits) {
+          for (const d of digits) {
+            const s = document.createElement("span");
+            s.textContent = d;
+            el.appendChild(s);
+          }
+        }
+
+        const tl = gsap.timeline({ paused: true });
+
+        // Reveal helper: hidden until `at`, then animates in. immediateRender
+        // is off so the CSS `.pre` state holds for every earlier frame.
+        function show(sel, at, dur, from, to) {
+          tl.fromTo(
+            sel,
+            Object.assign({ autoAlpha: 0 }, from || {}),
+            Object.assign(
+              { autoAlpha: 1, duration: dur, ease: "power3.out", immediateRender: false },
+              to || {}
+            ),
+            at
+          );
+        }
+
+        function hide(sel, at, dur, to) {
+          tl.to(sel, Object.assign({ autoAlpha: 0, duration: dur, ease: "power2.in" }, to || {}), at);
+        }
+
+        // Move the fake finger to a point inside its card, then pulse a ripple.
+        function tap(cursorSel, rippleSel, x, y, at) {
+          tl.to(cursorSel, { x: x, y: y, duration: 0.34, ease: "power2.inOut" }, at - 0.34);
+          tl.to(cursorSel, { scale: 0.62, duration: 0.09, ease: "power2.in" }, at);
+          tl.to(cursorSel, { scale: 1, duration: 0.22, ease: "power2.out" }, at + 0.09);
+          tl.fromTo(
+            rippleSel,
+            { autoAlpha: 0.95, scale: 0.25, x: x, y: y },
+            { autoAlpha: 0, scale: 1.25, duration: 0.55, ease: "power2.out", immediateRender: false },
+            at
+          );
+        }
+
+        // Draw an SVG connector on. It stays hidden (CSS) until this runs, so a
+        // shaft is never on screen ahead of the nodes it joins.
+        function drawLine(sel, at, dur) {
+          const el = $(sel);
+          const len = el.getTotalLength();
+          tl.fromTo(
+            el,
+            { autoAlpha: 1, strokeDasharray: len + " " + len, strokeDashoffset: len },
+            { autoAlpha: 1, strokeDashoffset: 0, duration: dur, ease: "power2.inOut", immediateRender: false },
+            at
+          );
+        }
+
+        // Send a short "comet" dash travelling along a path.
+        function comet(sel, at, dur) {
+          const el = $(sel);
+          const len = el.getTotalLength();
+          tl.fromTo(
+            el,
+            { autoAlpha: 1, strokeDashoffset: 54 },
+            {
+              autoAlpha: 1,
+              strokeDashoffset: -len,
+              duration: dur,
+              ease: "power1.inOut",
+              immediateRender: false,
+            },
+            at
+          );
+          tl.to(el, { autoAlpha: 0, duration: 0.18 }, at + dur - 0.18);
+        }
+
+        // Type text out character by character with a caret that tracks the end.
+        function typeOut(textSel, caretSel, at, each) {
+          const el = $(textSel);
+          const width = el.getBoundingClientRect().width;
+          const chars = splitChars(el);
+          const dur = chars.length * each;
+          tl.fromTo(
+            chars,
+            { autoAlpha: 0 },
+            { autoAlpha: 1, duration: 0.01, stagger: { each: each }, immediateRender: false },
+            at
+          );
+          tl.fromTo(
+            caretSel,
+            { autoAlpha: 1, x: 0 },
+            { autoAlpha: 1, x: width, duration: dur, ease: "none", immediateRender: false },
+            at
+          );
+          tl.to(caretSel, { autoAlpha: 0, duration: 0.18 }, at + dur + 0.12);
+          return dur;
+        }
+
+        /* ===================================================== build ==== */
+        // Everything is built after the webfont resolves, so every measured
+        // width below is the width that actually renders.
+        function build() {
+          /* ========================== SCENE 1 ========================== */
+          // 0–4 · the hook
+          show("#s1-l1", 0.18, 0.72, { y: 54, filter: "blur(14px)" }, { y: 0, filter: "blur(0px)" });
+          show("#s1-l2", 0.46, 0.72, { y: 54, filter: "blur(14px)" }, { y: 0, filter: "blur(0px)" });
+          tl.fromTo(
+            "#s1-bar",
+            { scaleX: 0 },
+            { scaleX: 1, duration: 0.5, ease: "power3.out", immediateRender: false },
+            1.12
+          );
+
+          // the BUYER label lands
+          tl.fromTo(
+            "#role-chip",
+            { autoAlpha: 0, scale: 0.7, y: -14 },
+            { autoAlpha: 1, scale: 1, y: 0, duration: 0.5, ease: "back.out(2.4)", immediateRender: false },
+            2.6
+          );
+
+          hide("#s1-l1", 3.58, 0.36, { y: -26 });
+          hide("#s1-l2", 3.62, 0.36, { y: -26 });
+
+          /* ========================== SCENE 2 ========================== */
+          // 4–14 · the buyer's purchase, sped up
+          show("#s2-card", 4.02, 0.6, { y: 70, scale: 0.96 }, { y: 0, scale: 1 });
+          show("#s2-kicker", 4.18, 0.45, { y: 18 }, { y: 0 });
+
+          show("#s2-cap1", 4.3, 0.5, { y: 34 }, { y: 0 });
+          hide("#s2-cap1", 7.25, 0.3, { y: -24 });
+          show("#s2-cap2", 7.5, 0.5, { y: 34 }, { y: 0 });
+          hide("#s2-cap2", 10.75, 0.3, { y: -24 });
+          show("#s2-cap3", 11.0, 0.5, { y: 34 }, { y: 0 });
+
+          const tick = { autoAlpha: 0.22, scaleX: 0.35 };
+          const tickTo = {
+            autoAlpha: 1,
+            scaleX: 1,
+            duration: 0.4,
+            transformOrigin: "left center",
+            immediateRender: false,
+          };
+          tl.fromTo("#s2-d1", tick, tickTo, 4.35);
+          tl.fromTo("#s2-d2", tick, tickTo, 7.55);
+          tl.fromTo("#s2-d3", tick, tickTo, 11.05);
+
+          // --- panel A: search a destination, pick it
+          show("#s2-pA", 4.25, 0.35);
+          show("#s2-cursor", 4.3, 0.25, { x: 560, y: 700 }, {});
+
+          tap("#s2-cursor", "#s2-ripple", 300, 196, 4.72);
+          tl.to("#s2-field", { borderColor: "#05e3f7", backgroundColor: "#fbfeff", duration: 0.25 }, 4.76);
+          hide("#s2-ph", 4.8, 0.2);
+          typeOut("#s2-typed", "#s2-caret", 5.02, 0.072);
+
+          show("#s2-results", 6.12, 0.42, { y: 26 }, { y: 0 });
+          tl.to("#s2-row-us", { backgroundColor: "#e9fbfd", duration: 0.25 }, 6.72);
+          tap("#s2-cursor", "#s2-ripple", 300, 400, 7.02);
+          hide("#s2-pA", 7.3, 0.28);
+
+          // --- panel B: add funds, $20 preset
+          show("#s2-pB", 7.42, 0.32);
+          tl.fromTo(
+            "#s2-tabpill",
+            { x: 0 },
+            { x: 408, duration: 0.42, ease: "power2.inOut", immediateRender: false },
+            7.76
+          );
+          tl.to("#s2-tab1", { color: "#6a7982", duration: 0.2 }, 7.8);
+          tl.to("#s2-tab3", { color: "#ffffff", duration: 0.2 }, 7.98);
+          tap("#s2-cursor", "#s2-ripple", 560, 118, 7.78);
+
+          show("#s2-fundsbody", 7.92, 0.4, { y: 22 }, { y: 0 });
+          tl.to(
+            "#s2-chip20",
+            { backgroundColor: "#05e3f7", color: "#0b1114", duration: 0.28, ease: "power2.out" },
+            8.34
+          );
+          tap("#s2-cursor", "#s2-ripple", 336, 470, 8.34);
+          tl.fromTo(
+            "#s2-chip20",
+            { scale: 1 },
+            { scale: 1.07, duration: 0.16, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false },
+            8.34
+          );
+
+          show("#s2-conv", 8.72, 0.42, { y: 20, scale: 0.97 }, { y: 0, scale: 1 });
+          show("#s2-choose", 9.02, 0.35, { y: 16 }, { y: 0 });
+          tap("#s2-cursor", "#s2-ripple", 336, 706, 9.38);
+          hide("#s2-pB", 9.52, 0.26);
+
+          // --- panel C: summary. No bonus/reward line — deliberately omitted.
+          show("#s2-pC", 9.64, 0.34, { y: 24 }, { y: 0 });
+          tap("#s2-cursor", "#s2-ripple", 336, 728, 10.58);
+          tl.fromTo(
+            "#s2-paybtn",
+            { scale: 1 },
+            { scale: 0.965, duration: 0.12, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false },
+            10.56
+          );
+          hide("#s2-pC", 10.86, 0.26);
+          hide("#s2-cursor", 10.86, 0.2);
+
+          // --- panel D: processing
+          show("#s2-pD", 11.0, 0.3);
+          tl.fromTo(
+            "#s2-spin",
+            { rotation: 0 },
+            { rotation: 900, duration: 1.3, ease: "none", immediateRender: false },
+            11.0
+          );
+          hide("#s2-pD", 12.1, 0.22);
+
+          // --- panel E: done
+          show("#s2-pE", 12.2, 0.26);
+          tl.fromTo(
+            "#s2-check",
+            { autoAlpha: 0, scale: 0.3 },
+            { autoAlpha: 1, scale: 1, duration: 0.55, ease: "back.out(2.6)", immediateRender: false },
+            12.26
+          );
+          show("#s2-done", 12.6, 0.42, { y: 22 }, { y: 0 });
+          show("#s2-done2", 12.78, 0.42, { y: 18 }, { y: 0 });
+          hide("#s2-card", 13.66, 0.34, { y: -34, scale: 0.98 });
+
+          /* ========================== SCENE 3 ========================== */
+          // 14–18 · the label switches: that buyer is not you
+          show("#s3-l1", 14.1, 0.55, { y: 42 }, { y: 0 });
+
+          tl.fromTo(
+            "#role-flash",
+            { autoAlpha: 0, scale: 0.86 },
+            { autoAlpha: 1, scale: 1.06, duration: 0.42, ease: "power2.out", immediateRender: false },
+            14.74
+          );
+          tl.to("#role-flash", { autoAlpha: 0, scale: 1.3, duration: 0.5, ease: "power2.out" }, 15.2);
+          tl.fromTo(
+            "#role-chip",
+            { scale: 1 },
+            { scale: 1.14, duration: 0.22, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false },
+            14.8
+          );
+          // BUYER out, YOU in — the switch reads on screen
+          tl.to("#role-buyer", { autoAlpha: 0, y: -26, duration: 0.3, ease: "power2.in" }, 14.82);
+          show("#role-you", 14.98, 0.4, { y: 26 }, { y: 0, ease: "back.out(2)" });
+
+          show("#s3-l2", 15.02, 0.5, { y: 36 }, { y: 0 });
+          show("#s3-n1", 15.34, 0.45, { y: 30, scale: 0.97 }, { y: 0, scale: 1 });
+          show("#s3-n2", 15.5, 0.45, { y: 30, scale: 0.97 }, { y: 0, scale: 1 });
+
+          drawLine("#s3-path", 15.7, 0.9);
+          comet("#s3-comet", 15.86, 1.05);
+          tl.fromTo(
+            "#s3-n2",
+            { scale: 1 },
+            { scale: 1.045, duration: 0.2, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false },
+            16.9
+          );
+          show("#s3-cap", 16.62, 0.5, { y: 22 }, { y: 0 });
+
+          hide("#s3-l1", 17.58, 0.3, { y: -20 });
+          hide("#s3-l2", 17.6, 0.3, { y: -20 });
+          hide("#s3-n1", 17.5, 0.3, { y: 20 });
+          hide("#s3-n2", 17.5, 0.3, { y: 20 });
+          hide("#s3-cap", 17.6, 0.3);
+          hide("#s3-path", 17.44, 0.26);
+
+          /* ========================== SCENE 4 ========================== */
+          // 18–27 · what revenue sharing actually pays you
+          show("#s4-card", 18.08, 0.55, { y: 46, scale: 0.97 }, { y: 0, scale: 1 });
+          show("#s4-copy", 18.32, 0.55, { y: 32 }, { y: 0 });
+          show("#s4-ftitle", 18.6, 0.45, { y: 22 }, { y: 0 });
+
+          // money-flow diagram: buyer → business revenue → 50/50 → you
+          show("#n-buyer", 18.86, 0.4, { x: -26, scale: 0.9 }, { x: 0, scale: 1, ease: "back.out(2)" });
+          drawLine("#p1", 19.18, 0.5);
+          drawLine("#p2", 19.18, 0.5);
+          comet("#c2", 19.3, 0.62);
+          show("#n-cost", 19.5, 0.38, { x: -18 }, { x: 0 });
+          show("#n-rev", 19.62, 0.4, { x: -18, scale: 0.95 }, { x: 0, scale: 1, ease: "back.out(1.8)" });
+
+          drawLine("#p3", 20.16, 0.48);
+          drawLine("#p4", 20.16, 0.48);
+          show("#pct-a", 20.34, 0.3);
+          show("#pct-b", 20.34, 0.3);
+          comet("#c4", 20.38, 0.6);
+          show("#n-co", 20.6, 0.38, { x: -16 }, { x: 0 });
+          show("#n-pool", 20.74, 0.42, { x: -16, scale: 0.94 }, { x: 0, scale: 1, ease: "back.out(1.9)" });
+
+          drawLine("#p5", 21.24, 0.42);
+          comet("#c5", 21.34, 0.56);
+          show("#n-you", 21.6, 0.44, { y: 18, scale: 0.88 }, { y: 0, scale: 1, ease: "back.out(2.4)" });
+          tl.fromTo(
+            "#n-you",
+            { boxShadow: "0 0 0 0px rgba(5,227,247,0.55)" },
+            { boxShadow: "0 0 0 16px rgba(5,227,247,0)", duration: 0.8, ease: "power2.out", immediateRender: false },
+            21.86
+          );
+
+          // the balance actually ticks: $4.19 → $4.20
+          buildStrip($("#odo-t"), ["1", "2"]);
+          buildStrip($("#odo-h"), ["9", "0"]);
+          tl.fromTo("#odo-t", { y: 0 }, { y: -108, duration: 0.5, ease: "power3.inOut", immediateRender: false }, 21.9);
+          tl.fromTo("#odo-h", { y: 0 }, { y: -108, duration: 0.5, ease: "power3.inOut", immediateRender: false }, 21.9);
+          tl.fromTo(
+            "#s4-plus",
+            { autoAlpha: 0, y: 16, scale: 0.8 },
+            { autoAlpha: 1, y: 0, scale: 1, duration: 0.4, ease: "back.out(2.2)", immediateRender: false },
+            21.96
+          );
+          tl.to("#s4-plus", { autoAlpha: 0, y: -22, duration: 0.5, ease: "power2.in" }, 23.5);
+          tl.fromTo(
+            "#s4-card",
+            { scale: 1 },
+            { scale: 1.018, duration: 0.26, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false },
+            21.9
+          );
+
+          show("#s4-auto", 24.02, 0.48, { y: 20, scale: 0.94 }, { y: 0, scale: 1, ease: "back.out(1.9)" });
+
+          hide("#s4-card", 26.62, 0.3, { y: -22 });
+          hide("#s4-copy", 26.62, 0.3, { y: -22 });
+          hide("#s4-auto", 26.62, 0.3);
+          hide("#s4-flow", 26.55, 0.3);
+          // the role chip steps aside for the full-bleed type
+          hide("#role-chip", 26.7, 0.3, { scale: 0.86 });
+
+          /* ========================== SCENE 5 ========================== */
+          // 27–32 · what you do NOT have to do
+          show("#s5-l1", 27.18, 0.42, { y: 34, scale: 0.96 }, { y: 0, scale: 1, ease: "back.out(1.7)" });
+          tl.fromTo("#s5-s1", { scaleX: 0 }, { scaleX: 1, duration: 0.34, ease: "power2.inOut", immediateRender: false }, 27.48);
+
+          show("#s5-l2", 28.08, 0.42, { y: 34, scale: 0.96 }, { y: 0, scale: 1, ease: "back.out(1.7)" });
+          tl.fromTo("#s5-s2", { scaleX: 0 }, { scaleX: 1, duration: 0.34, ease: "power2.inOut", immediateRender: false }, 28.38);
+
+          show("#s5-l3", 29.18, 0.5, { y: 46, scale: 0.93 }, { y: 0, scale: 1, ease: "back.out(2.1)" });
+          tl.fromTo("#s5-bar", { scaleX: 0 }, { scaleX: 1, duration: 0.46, ease: "power3.out", immediateRender: false }, 29.62);
+
+          hide("#s5-l1", 31.5, 0.32, { y: -22 });
+          hide("#s5-l2", 31.53, 0.32, { y: -22 });
+          hide("#s5-l3", 31.56, 0.32, { y: -22 });
+
+          /* ========================== SCENE 6 ========================== */
+          // 32–38 · take the money out, to PayPal
+          tl.fromTo(
+            "#role-chip",
+            { autoAlpha: 0, scale: 0.86 },
+            { autoAlpha: 1, scale: 1, duration: 0.4, ease: "power3.out", immediateRender: false },
+            32.02
+          );
+          show("#s6-head", 32.12, 0.5, { x: -30 }, { x: 0 });
+          show("#s6-card", 32.04, 0.5, { y: 48, scale: 0.97 }, { y: 0, scale: 1 });
+          show("#s6-pA", 32.2, 0.3);
+          show("#s6-cursor", 32.24, 0.25, { x: 560, y: 740 }, {});
+          tap("#s6-cursor", "#s6-ripple", 360, 566, 32.62);
+          tl.fromTo(
+            "#s6-wbtn",
+            { scale: 1 },
+            { scale: 0.96, duration: 0.12, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false },
+            32.6
+          );
+          hide("#s6-pA", 32.86, 0.24);
+
+          // the withdraw sheet — PayPal only
+          show("#s6-pB", 32.98, 0.36, { y: 60 }, { y: 0 });
+          tap("#s6-cursor", "#s6-ripple", 300, 396, 33.74);
+          tl.to("#s6-amtfield", { borderColor: "#05e3f7", backgroundColor: "#fbfeff", duration: 0.25 }, 33.78);
+          hide("#s6-amtph", 33.82, 0.18);
+          typeOut("#s6-amt", "#s6-amtcaret", 33.9, 0.13);
+
+          // confirm goes live, then is pressed
+          tl.to("#s6-confirm", { backgroundColor: "#0b0b0f", color: "#ffffff", duration: 0.3, ease: "power2.out" }, 35.02);
+          tap("#s6-cursor", "#s6-ripple", 360, 748, 35.58);
+          tl.fromTo(
+            "#s6-confirm",
+            { scale: 1 },
+            { scale: 0.965, duration: 0.12, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false },
+            35.56
+          );
+          hide("#s6-pB", 35.8, 0.24);
+          hide("#s6-cursor", 35.8, 0.2);
+
+          show("#s6-pC", 35.92, 0.26);
+          tl.fromTo(
+            "#s6-check",
+            { autoAlpha: 0, scale: 0.3 },
+            { autoAlpha: 1, scale: 1, duration: 0.5, ease: "back.out(2.6)", immediateRender: false },
+            35.98
+          );
+          show("#s6-sent", 36.24, 0.4, { y: 20 }, { y: 0 });
+          show("#s6-sent2", 36.4, 0.4, { y: 16 }, { y: 0 });
+          show("#s6-toast", 36.12, 0.5, { x: 46, scale: 0.94 }, { x: 0, scale: 1, ease: "back.out(1.8)" });
+          tl.fromTo(
+            "#s6-toast",
+            { boxShadow: "0 0 0 0px rgba(31,156,99,0.45)" },
+            { boxShadow: "0 0 0 18px rgba(31,156,99,0)", duration: 0.85, ease: "power2.out", immediateRender: false },
+            36.3
+          );
+
+          hide("#s6-head", 37.62, 0.3, { x: -22 });
+          hide("#s6-card", 37.62, 0.3, { y: -24, scale: 0.98 });
+          hide("#s6-toast", 37.62, 0.3, { x: 22 });
+          hide("#role-chip", 37.6, 0.3, { scale: 0.86 });
+
+          /* ========================== SCENE 7 ========================== */
+          // 38–45 · "eSIM that pays you back", then the logo
+          const esim = $("#ow-esim");
+          const dots = $("#ow-dots");
+          const tail = $("#ow-tail");
+
+          // Measure the real rendered widths, then solve for both positions.
+          const wE = esim.getBoundingClientRect().width;
+          const wD = dots.getBoundingClientRect().width;
+          const wT = tail.getBoundingClientRect().width;
+          const sp = $("#ow-probe").getBoundingClientRect().width;
+
+          // Resting state: "eSIM that pays you back" optically centred.
+          const xF = Math.round((1920 - (wE + sp + wT)) / 2);
+          const xFTail = Math.round(xF + wE + sp);
+
+          // Opening state: "eSIM..." sits centre-left, with the whole typed-out
+          // phrase still inside a 120px safe margin.
+          let xA = Math.round(1920 * 0.4 - (wE + wD) / 2);
+          xA = Math.min(xA, Math.round(1800 - (wE + wD + sp + wT)));
+          xA = Math.max(xA, xF + 140);
+          const xADots = Math.round(xA + wE);
+          const xATail = Math.round(xA + wE + wD + sp);
+
+          // "eSIM" pops in, centre-left
+          tl.fromTo(
+            esim,
+            { autoAlpha: 0, scale: 0.68, x: xA },
+            { autoAlpha: 1, scale: 1, x: xA, duration: 0.46, ease: "back.out(2.4)", immediateRender: false },
+            38.06
+          );
+          tl.fromTo(
+            dots,
+            { autoAlpha: 0, scale: 0.68, x: xADots },
+            { autoAlpha: 1, scale: 1, x: xADots, duration: 0.38, ease: "back.out(2.4)", immediateRender: false },
+            38.3
+          );
+
+          // ~1s later, "that pays you back" types in to its right
+          const typeStart = 39.3;
+          const typeEach = 0.075;
+          const tailChars = splitChars(tail);
+          const typeDur = tailChars.length * typeEach;
+
+          tl.fromTo(tail, { x: xATail }, { x: xATail, duration: 0.04, immediateRender: false }, typeStart - 0.1);
+          tl.fromTo(
+            tailChars,
+            { autoAlpha: 0 },
+            { autoAlpha: 1, duration: 0.01, stagger: { each: typeEach }, immediateRender: false },
+            typeStart
+          );
+          tl.fromTo(
+            "#ow-caret",
+            { autoAlpha: 1, x: xATail },
+            { autoAlpha: 1, x: xATail + wT, duration: typeDur, ease: "none", immediateRender: false },
+            typeStart
+          );
+          tl.to("#ow-caret", { autoAlpha: 0, duration: 0.16 }, typeStart + typeDur + 0.12);
+
+          // the dots drop out, then "eSIM" glides left and the phrase centres
+          tl.to(dots, { autoAlpha: 0, scale: 0.55, duration: 0.26, ease: "power2.in" }, 41.18);
+          tl.fromTo(esim, { x: xA }, { x: xF, duration: 0.86, ease: "power2.inOut", immediateRender: false }, 41.42);
+          tl.fromTo(tail, { x: xATail }, { x: xFTail, duration: 0.86, ease: "power2.inOut", immediateRender: false }, 41.42);
+
+          // hold, then hand over to the logo
+          tl.to([esim, tail], { autoAlpha: 0, y: -26, duration: 0.5, ease: "power2.in" }, 42.88);
+          tl.fromTo(
+            "#s7-logo-wrap",
+            { autoAlpha: 0, scale: 0.94 },
+            { autoAlpha: 1, scale: 1, duration: 0.78, ease: "power3.out", immediateRender: false },
+            43.32
+          );
+          tl.fromTo(
+            "#s7-sub",
+            { autoAlpha: 0, y: 18 },
+            { autoAlpha: 1, y: 0, duration: 0.55, ease: "power3.out", immediateRender: false },
+            43.92
+          );
+
+          window.__timelines["main"] = tl;
+          if (typeof window.__hfForceTimelineRebind === "function") {
+            window.__hfForceTimelineRebind();
+          }
+        }
+
+        if (document.fonts && document.fonts.ready) {
+          document.fonts.ready.then(build);
+        } else {
+          build();
+        }
+      })();
+    </script>
+  </body>
+</html>
