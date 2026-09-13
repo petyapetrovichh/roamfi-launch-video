@@ -1,0 +1,2041 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>RoamFi V2 — Launch (motion, vertical)</title>
+    <script src="assets/js/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Inter";
+        font-style: normal;
+        font-weight: 100 900;
+        font-display: block;
+        src: url("assets/fonts/Inter.woff2") format("woff2");
+      }
+
+      :root {
+        --bg: #eef3f6;
+        --card: #ffffff;
+        --ink: #0b1114;
+        --ink2: #34414a;
+        --muted: #5b6970;
+        --line: #e2eaee;
+        --field: #f1f5f8;
+        --cyan: #05e3f7;
+        --cyan-soft: #d5fafe;
+        --cyan-deep: #04a6b6;
+        --green: #5fd89b;
+        --green-deep: #1f9c63;
+        --black: #0b0b0f;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: var(--bg);
+      }
+
+      body {
+        font-family: "Inter", "Liberation Sans", Arial, sans-serif;
+        color: var(--ink);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      #root {
+        position: relative;
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: var(--bg);
+      }
+
+      .clip {
+        position: absolute;
+        inset: 0;
+      }
+
+      .cam {
+        position: absolute;
+        inset: 0;
+        transform-origin: 50% 50%;
+      }
+
+      .hide {
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      /* ------------------------------------------------------- backdrop */
+      #bg-base {
+        position: absolute;
+        inset: -200px;
+        background: linear-gradient(168deg, #f6fafc 0%, #eaf1f5 55%, #e3edf2 100%);
+      }
+
+      #bg-blobs {
+        position: absolute;
+        inset: 0;
+        transform-origin: 50% 50%;
+      }
+
+      .blob {
+        position: absolute;
+        border-radius: 50%;
+        background: radial-gradient(circle at 50% 50%, rgba(5, 227, 247, 0.34), rgba(5, 227, 247, 0.10) 42%, rgba(5, 227, 247, 0) 68%);
+      }
+
+      #blob-a { left: 250px; top: -520px; width: 1300px; height: 1300px; }
+      #blob-b { left: -720px; top: 900px; width: 1200px; height: 1200px; }
+      #blob-c { left: 200px; top: 1300px; width: 900px; height: 900px; opacity: 0.8; }
+      #blob-d { left: -260px; top: 300px; width: 700px; height: 700px; opacity: 0.55; }
+
+      #bg-grid {
+        position: absolute;
+        inset: -240px;
+        opacity: 0.45;
+        background-image:
+          linear-gradient(rgba(11, 17, 20, 0.032) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(11, 17, 20, 0.032) 1px, transparent 1px);
+        background-size: 96px 96px;
+      }
+
+      #bg-sweep {
+        position: absolute;
+        left: -500px;
+        top: -600px;
+        width: 560px;
+        height: 3000px;
+        transform: rotate(18deg);
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.55) 50%, rgba(255, 255, 255, 0) 100%);
+        opacity: 0.7;
+      }
+
+      #bg-vignette {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(900px 1500px at 50% 50%, rgba(255, 255, 255, 0) 55%, rgba(11, 17, 20, 0.06) 100%);
+      }
+
+      /* ------------------------------------------------------ role pill */
+      #pill-layer {
+        z-index: 80;
+      }
+
+      #pill-w {
+        position: absolute;
+        left: 415px;
+        top: 120px;
+        width: 250px;
+        height: 62px;
+        transform-origin: 50% 50%;
+      }
+
+      #pill {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 62px;
+        width: 250px;
+        border-radius: 31px;
+        background: var(--black);
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding-left: 24px;
+        box-shadow: 0 16px 36px rgba(11, 17, 20, 0.18);
+        overflow: hidden;
+      }
+
+      #pill-dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--cyan);
+        flex: none;
+      }
+
+      .pill-txt {
+        position: absolute;
+        left: 62px;
+        top: 0;
+        height: 62px;
+        line-height: 62px;
+        font-weight: 800;
+        font-size: 24px;
+        letter-spacing: 0.14em;
+        color: #fff;
+        white-space: nowrap;
+      }
+
+      #pill-you {
+        color: var(--ink);
+      }
+
+      .pill-ch {
+        display: inline-block;
+      }
+
+      #pill-ring {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 250px;
+        height: 62px;
+        border-radius: 31px;
+        border: 3px solid var(--cyan);
+        transform-origin: 50% 50%;
+      }
+
+      /* ------------------------------------------------------ typography */
+      .line {
+        position: absolute;
+        left: 0;
+        width: 1080px;
+        text-align: center;
+        font-weight: 800;
+        font-size: 88px;
+        line-height: 1.08;
+        letter-spacing: -0.035em;
+        color: var(--ink);
+        white-space: nowrap;
+      }
+
+      .line.mid { font-size: 72px; }
+      .line.s1w { font-size: 124px; letter-spacing: -0.045em; }
+      .line.sm { font-size: 56px; letter-spacing: -0.025em; }
+
+      .w {
+        display: inline-block;
+        white-space: pre;
+        will-change: transform;
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .ch {
+        opacity: 0;
+      }
+
+      .u-cyan {
+        position: relative;
+        display: inline-block;
+      }
+
+      .u-cyan .ul {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -6px;
+        height: 14px;
+        border-radius: 7px;
+        background: var(--cyan);
+        transform-origin: 0 50%;
+        transform: scaleX(0);
+      }
+
+      .hl {
+        display: inline-block;
+        background: var(--cyan);
+        border-radius: 18px;
+        padding: 0 18px;
+        color: var(--ink);
+      }
+
+      .strike {
+        position: relative;
+        display: inline-block;
+      }
+
+      .strike .sl {
+        position: absolute;
+        left: -10px;
+        right: -10px;
+        top: 50%;
+        height: 12px;
+        margin-top: -4px;
+        border-radius: 6px;
+        background: var(--cyan);
+        transform-origin: 0 50%;
+        transform: scaleX(0);
+      }
+
+      /* ---------------------------------------------------------- objects */
+      .card {
+        position: absolute;
+        background: var(--card);
+        border-radius: 36px;
+        box-shadow: 0 40px 90px rgba(11, 17, 20, 0.13), 0 4px 14px rgba(11, 17, 20, 0.05);
+        will-change: transform;
+      }
+
+      .lbl {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--muted);
+        letter-spacing: 0.02em;
+      }
+
+      .lbl.caps {
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      .btn {
+        position: absolute;
+        border-radius: 999px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 30px;
+        letter-spacing: -0.01em;
+      }
+
+      .btn.black { background: var(--black); color: #fff; }
+      .btn.cyan { background: var(--cyan); color: var(--ink); }
+      .btn.ghost { background: var(--field); color: var(--muted); }
+
+      /* search object */
+      #search {
+        left: 70px;
+        top: 700px;
+        width: 940px;
+        height: 460px;
+        padding: 40px;
+      }
+
+      #search-title {
+        font-size: 40px;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        margin-bottom: 26px;
+      }
+
+      #field {
+        position: relative;
+        height: 112px;
+        border-radius: 56px;
+        background: var(--field);
+        border: 4px solid transparent;
+        display: flex;
+        align-items: center;
+        padding: 0 40px;
+        gap: 22px;
+        font-size: 38px;
+        color: var(--muted);
+      }
+
+      #field-glow {
+        position: absolute;
+        inset: -4px;
+        border-radius: 56px;
+        border: 4px solid var(--cyan);
+        box-shadow: 0 0 0 10px rgba(5, 227, 247, 0.22);
+        opacity: 0;
+      }
+
+      #mag {
+        width: 40px;
+        height: 40px;
+        flex: none;
+      }
+
+      #ph {
+        position: absolute;
+        left: 102px;
+      }
+
+      #typed {
+        color: var(--ink);
+        font-weight: 600;
+        white-space: pre;
+      }
+
+      #caret {
+        width: 4px;
+        height: 46px;
+        background: var(--cyan-deep);
+        border-radius: 2px;
+        margin-left: -19px;
+      }
+
+      /* untyped characters take no width, so the caret always sits right
+         after the last typed glyph */
+      #typed .ch {
+        display: none;
+        opacity: 1;
+      }
+
+      #chips {
+        position: absolute;
+        left: 40px;
+        top: 250px;
+        display: flex;
+        gap: 18px;
+      }
+
+      .chip {
+        height: 70px;
+        border-radius: 35px;
+        background: var(--field);
+        display: flex;
+        align-items: center;
+        padding: 0 30px;
+        font-size: 28px;
+        font-weight: 600;
+        color: var(--ink2);
+        gap: 14px;
+      }
+
+      #results {
+        position: absolute;
+        left: 40px;
+        right: 40px;
+        top: 250px;
+      }
+
+      #results .lbl { margin-bottom: 14px; }
+
+      .row {
+        height: 84px;
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        font-size: 32px;
+        font-weight: 600;
+        border-bottom: 2px solid var(--line);
+      }
+
+      .row .chev {
+        margin-left: auto;
+        color: #a3b0b8;
+        font-size: 34px;
+      }
+
+      .flag {
+        width: 46px;
+        height: 32px;
+        border-radius: 6px;
+        flex: none;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .flag.us {
+        background: repeating-linear-gradient(180deg, #d63b3b 0 4.6px, #ffffff 4.6px 9.2px);
+      }
+
+      .flag.us::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 20px;
+        height: 17px;
+        background: #2f4fa3;
+      }
+
+      .flag.jp { background: #fff; border: 1px solid #ddd; }
+      .flag.jp::before {
+        content: "";
+        position: absolute;
+        left: 15px;
+        top: 8px;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #d63b3b;
+      }
+
+      .flag.kr { background: #fff; border: 1px solid #ddd; }
+      .flag.kr::before {
+        content: "";
+        position: absolute;
+        left: 15px;
+        top: 8px;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: linear-gradient(180deg, #d63b3b 50%, #2f4fa3 50%);
+      }
+
+      .flag.sg { background: linear-gradient(180deg, #d63b3b 50%, #fff 50%); border: 1px solid #ddd; }
+
+      /* funds panel */
+      #funds {
+        left: 200px;
+        top: 480px;
+        width: 680px;
+        height: 820px;
+        padding: 36px 40px;
+      }
+
+      .tabs {
+        height: 64px;
+        border-radius: 32px;
+        background: var(--field);
+        display: flex;
+        padding: 4px;
+        gap: 4px;
+      }
+
+      .tab {
+        flex: 1;
+        border-radius: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        font-weight: 600;
+        color: var(--muted);
+      }
+
+      .tab.on {
+        background: var(--black);
+        color: #fff;
+      }
+
+      #funds-h {
+        margin-top: 30px;
+        font-size: 24px;
+        font-weight: 500;
+        color: var(--ink2);
+        line-height: 1.35;
+      }
+
+      #amt {
+        position: absolute;
+        left: 40px;
+        right: 40px;
+        top: 220px;
+        height: 120px;
+        border-radius: 22px;
+        background: var(--field);
+        border: 2px solid var(--line);
+        display: flex;
+        align-items: center;
+        padding: 0 36px;
+        font-size: 64px;
+        font-weight: 500;
+      }
+
+      #amt-0,
+      #amt-v {
+        position: absolute;
+        left: 36px;
+        top: 50%;
+        margin-top: -40px;
+        line-height: 80px;
+      }
+
+      #amt-0 { color: var(--muted); }
+
+      #amt .cur {
+        margin-left: auto;
+        font-size: 34px;
+        color: var(--muted);
+      }
+
+      #presets {
+        position: absolute;
+        left: 40px;
+        right: 40px;
+        top: 370px;
+        height: 76px;
+        display: flex;
+        gap: 14px;
+      }
+
+      .pre {
+        flex: 1;
+        border-radius: 38px;
+        background: var(--field);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--muted);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .pre .fill {
+        position: absolute;
+        inset: 0;
+        border-radius: 38px;
+        background: var(--cyan);
+        transform: scale(0);
+        transform-origin: 50% 50%;
+      }
+
+      .pre span {
+        position: relative;
+      }
+
+      #pre-20-txt {
+        color: var(--ink);
+      }
+
+      #price {
+        position: absolute;
+        left: 40px;
+        right: 40px;
+        top: 476px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 14px;
+        font-size: 24px;
+        color: var(--muted);
+      }
+
+      #price .tag {
+        background: var(--field);
+        border-radius: 12px;
+        padding: 6px 14px;
+        color: var(--ink2);
+        font-weight: 600;
+      }
+
+      #conv {
+        position: absolute;
+        left: 40px;
+        right: 40px;
+        top: 550px;
+        height: 100px;
+        border-radius: 22px;
+        border: 2px solid var(--line);
+        display: flex;
+        align-items: center;
+        padding: 0 30px;
+        font-size: 34px;
+        font-weight: 800;
+      }
+
+      #conv .usd,
+      #conv .gb {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        white-space: nowrap;
+      }
+
+      #conv .gb { margin-left: auto; }
+      #conv .unit { font-weight: 500; font-size: 26px; color: var(--ink2); }
+
+      #conv .arrow {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 60px;
+        height: 4px;
+        margin: -2px 0 0 -30px;
+        background: var(--cyan-deep);
+        border-radius: 2px;
+        transform-origin: 0 50%;
+      }
+
+      #conv .arrow::after {
+        content: "";
+        position: absolute;
+        right: -2px;
+        top: -8px;
+        width: 20px;
+        height: 20px;
+        border-top: 4px solid var(--cyan-deep);
+        border-right: 4px solid var(--cyan-deep);
+        transform: rotate(45deg);
+      }
+
+      .coin {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: var(--black);
+        color: #fff;
+        font-size: 20px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: none;
+      }
+
+      .sig {
+        width: 34px;
+        height: 34px;
+        flex: none;
+      }
+
+      #funds-btn {
+        left: 40px;
+        right: 40px;
+        top: 690px;
+        height: 84px;
+      }
+
+      /* check burst */
+      .check-w {
+        position: absolute;
+        width: 280px;
+        height: 280px;
+        transform-origin: 50% 50%;
+      }
+
+      .check-c {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        background: var(--green);
+        box-shadow: 0 30px 70px rgba(31, 156, 99, 0.28);
+      }
+
+      .check-w svg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      .check-w path {
+        fill: none;
+        stroke: var(--ink);
+        stroke-width: 11;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-dasharray: 110;
+        stroke-dashoffset: 110;
+      }
+
+      .check-ring {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        border: 6px solid var(--green);
+        transform-origin: 50% 50%;
+        opacity: 0;
+      }
+
+      .pt {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 18px;
+        height: 18px;
+        margin: -9px 0 0 -9px;
+        border-radius: 50%;
+        background: var(--green);
+        opacity: 0;
+      }
+
+      .pt.c { background: var(--cyan); }
+
+      /* pair cards */
+      #card-a,
+      #card-b {
+        left: 230px;
+        width: 620px;
+        height: 270px;
+        padding: 36px 40px;
+      }
+
+      #card-a { top: 560px; }
+      #card-b { top: 960px; }
+
+      .mini-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        height: 40px;
+        border-radius: 20px;
+        padding: 0 18px;
+        font-size: 18px;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+      }
+
+      .mini-pill.dark { background: var(--black); color: #fff; }
+      .mini-pill.cyan { background: var(--cyan); color: var(--ink); }
+      .mini-pill i {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--cyan);
+      }
+      .mini-pill.cyan i { background: var(--ink); }
+
+      .card-big {
+        margin-top: 22px;
+        white-space: nowrap;
+        font-size: 50px;
+        font-weight: 800;
+        letter-spacing: -0.035em;
+        line-height: 1.05;
+      }
+
+      .card-sub {
+        margin-top: 10px;
+        font-size: 24px;
+        color: var(--muted);
+        font-weight: 500;
+      }
+
+      #link {
+        position: absolute;
+        left: 537px;
+        top: 836px;
+        width: 6px;
+        height: 88px;
+        transform-origin: 50% 0;
+        background: repeating-linear-gradient(180deg, var(--cyan-deep) 0 14px, transparent 14px 26px);
+        border-radius: 3px;
+      }
+
+      #link-dot {
+        position: absolute;
+        left: 528px;
+        top: 826px;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: var(--cyan);
+        box-shadow: 0 0 0 8px rgba(5, 227, 247, 0.25);
+      }
+
+      /* revenue object */
+      #rev {
+        left: 140px;
+        top: 780px;
+        width: 800px;
+        height: 330px;
+        padding: 40px 48px;
+        transform-origin: 50% 50%;
+      }
+
+      #rev-glow {
+        position: absolute;
+        inset: -6px;
+        border-radius: 42px;
+        border: 6px solid var(--cyan);
+        box-shadow: 0 0 0 16px rgba(5, 227, 247, 0.22), 0 0 90px rgba(5, 227, 247, 0.5);
+        opacity: 0;
+      }
+
+      #rev-amt {
+        margin-top: 18px;
+        font-variant-numeric: tabular-nums;
+        font-size: 120px;
+        font-weight: 800;
+        letter-spacing: -0.04em;
+        line-height: 1;
+        display: flex;
+        align-items: flex-end;
+      }
+
+      .odo {
+        display: inline-block;
+        height: 120px;
+        overflow: hidden;
+        line-height: 120px;
+        vertical-align: bottom;
+      }
+
+      .strip {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .strip span {
+        display: block;
+        height: 120px;
+        line-height: 120px;
+      }
+
+      #rev-btn {
+        right: 48px;
+        top: 130px;
+        width: 220px;
+        height: 76px;
+      }
+
+      #rev-stats {
+        margin-top: 26px;
+        display: flex;
+        gap: 40px;
+        font-size: 24px;
+        color: var(--muted);
+        font-weight: 500;
+      }
+
+      #rev-stats b {
+        color: var(--ink);
+        font-weight: 800;
+        display: inline-flex;
+        align-items: flex-end;
+        line-height: 1;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .odo-s {
+        display: inline-block;
+        height: 24px;
+        line-height: 24px;
+        overflow: hidden;
+        vertical-align: bottom;
+      }
+
+      .odo-s .strip span {
+        height: 24px;
+        line-height: 24px;
+      }
+
+      #plus {
+        position: absolute;
+        left: 760px;
+        top: 730px;
+        height: 78px;
+        padding: 0 32px;
+        border-radius: 39px;
+        background: var(--green);
+        color: var(--ink);
+        font-size: 44px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        letter-spacing: -0.02em;
+        box-shadow: 0 20px 50px rgba(31, 156, 99, 0.25);
+      }
+
+      #tag {
+        position: absolute;
+        left: 50%;
+        top: 470px;
+        height: 88px;
+        margin-left: -470px;
+        width: 940px;
+        border-radius: 44px;
+        background: var(--black);
+        color: #fff;
+        font-size: 34px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 22px;
+        letter-spacing: -0.01em;
+      }
+
+      #tag i {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--cyan);
+      }
+
+      /* withdraw phone */
+      #s9-txt {
+        position: absolute;
+        inset: 0;
+      }
+
+      #wd {
+        left: 210px;
+        top: 400px;
+        width: 660px;
+        height: 1320px;
+        padding: 40px;
+        border: 12px solid #111417;
+        border-radius: 76px;
+        box-shadow: 0 60px 120px rgba(11, 17, 20, 0.28);
+      }
+
+      #wd::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 24px;
+        width: 170px;
+        height: 36px;
+        margin-left: -85px;
+        border-radius: 18px;
+        background: #111417;
+      }
+
+      .wd-row {
+        position: absolute;
+        left: 40px;
+        right: 40px;
+        height: 88px;
+        border-radius: 22px;
+        border: 3px solid var(--line);
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        padding: 0 26px;
+        font-size: 26px;
+        font-weight: 600;
+        color: var(--ink2);
+      }
+
+      .wd-row .val {
+        margin-left: auto;
+        font-weight: 800;
+        color: var(--ink);
+        font-size: 30px;
+      }
+
+      .wd-row .sel {
+        position: absolute;
+        inset: -3px;
+        border-radius: 22px;
+        border: 3px solid var(--cyan);
+        box-shadow: 0 0 0 8px rgba(5, 227, 247, 0.2);
+        opacity: 0;
+      }
+
+      .tick {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--green);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: none;
+        transform-origin: 50% 50%;
+      }
+
+      .tick.off { background: var(--field); }
+
+      .tick svg {
+        width: 20px;
+        height: 20px;
+      }
+
+      #wd-from { top: 110px; }
+      #wd-row1 { top: 150px; }
+      #wd-row2 { top: 256px; }
+      #wd-amtl { top: 382px; display: flex; justify-content: space-between; left: 40px; right: 40px; position: absolute; }
+      #wd-amt {
+        position: absolute;
+        left: 40px;
+        right: 40px;
+        top: 426px;
+        height: 96px;
+        border-radius: 22px;
+        background: var(--field);
+        display: flex;
+        align-items: center;
+        padding: 0 30px;
+        font-size: 40px;
+        font-weight: 600;
+        gap: 14px;
+      }
+
+      #wd-amt .dol { color: var(--muted); }
+      #wd-amt .max {
+        margin-left: auto;
+        font-weight: 800;
+        font-size: 26px;
+        color: var(--cyan-deep);
+      }
+
+      #wd-amt .caret2 {
+        width: 4px;
+        height: 44px;
+        border-radius: 2px;
+        background: var(--cyan-deep);
+        margin-left: -12px;
+      }
+
+      #wd-typed .ch {
+        display: none;
+        opacity: 1;
+      }
+
+      #wd-tol { top: 554px; position: absolute; left: 40px; }
+      #wd-pp {
+        position: absolute;
+        left: 40px;
+        right: 40px;
+        top: 594px;
+        height: 118px;
+        border-radius: 22px;
+        border: 3px solid var(--line);
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        padding: 0 26px;
+      }
+
+      #wd-pp .sel {
+        position: absolute;
+        inset: -3px;
+        border-radius: 22px;
+        border: 3px solid var(--cyan);
+        box-shadow: 0 0 0 8px rgba(5, 227, 247, 0.2);
+        opacity: 0;
+      }
+
+      .pp-ic {
+        width: 66px;
+        height: 66px;
+        border-radius: 50%;
+        background: var(--field);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 900;
+        font-style: italic;
+        font-size: 36px;
+        flex: none;
+      }
+
+      .pp-t { font-size: 28px; font-weight: 800; }
+      .pp-s { font-size: 20px; color: var(--muted); margin-top: 4px; }
+
+      #wd-btn {
+        left: 40px;
+        right: 40px;
+        top: 734px;
+        height: 84px;
+        overflow: hidden;
+      }
+
+      #wd-btn .press {
+        position: absolute;
+        inset: 0;
+        background: var(--cyan);
+        transform: scaleX(0);
+        transform-origin: 0 50%;
+      }
+
+      #wd-btn span { position: relative; }
+
+      /* sent scene */
+      #sent-check { left: 400px; top: 560px; }
+
+      #sent-t1 {
+        position: absolute;
+        left: 0;
+        width: 1080px;
+        text-align: center;
+        top: 900px;
+        font-size: 84px;
+        font-weight: 800;
+        letter-spacing: -0.035em;
+        white-space: nowrap;
+      }
+
+      #sent-t2 {
+        position: absolute;
+        left: 0;
+        width: 1080px;
+        text-align: center;
+        top: 1012px;
+        font-size: 48px;
+        font-weight: 600;
+        color: var(--ink2);
+        white-space: nowrap;
+        letter-spacing: -0.02em;
+      }
+
+      #sent-t2 b { color: var(--green-deep); font-weight: 800; }
+
+      #notif {
+        left: 260px;
+        top: 220px;
+        width: 560px;
+        height: 150px;
+        padding: 26px 30px;
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        border-radius: 30px;
+        transform-origin: 100% 0;
+      }
+
+      .pp-logo {
+        width: 66px;
+        height: 66px;
+        border-radius: 50%;
+        background: #fff;
+        border: 2px solid var(--line);
+        overflow: hidden;
+        flex: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .pp-logo img {
+        display: block;
+        width: 66px;
+        height: 66px;
+      }
+
+      #notif .pp-logo { width: 78px; height: 78px; }
+      #notif .pp-logo img { width: 78px; height: 78px; }
+      #notif .nt { font-size: 22px; font-weight: 700; display: flex; justify-content: space-between; }
+      #notif .nt span { color: var(--muted); font-weight: 500; }
+      #notif .nb { font-size: 26px; color: var(--ink2); margin-top: 6px; font-weight: 500; }
+      #notif .nb b { color: var(--green-deep); font-weight: 800; display: inline-block; }
+      #notif .body { flex: 1; }
+
+      /* outro */
+      #outro-g {
+        position: absolute;
+        left: 0;
+        width: 1080px;
+        top: 922px;
+        text-align: center;
+        font-size: 66px;
+        font-weight: 800;
+        letter-spacing: -0.04em;
+        line-height: 1.1;
+        white-space: nowrap;
+      }
+
+      #o-esim {
+        position: relative;
+        display: inline-block;
+      }
+
+      #o-dots {
+        position: absolute;
+        left: 100%;
+        top: 0;
+        width: 88px;
+        text-align: left;
+        white-space: pre;
+      }
+
+      #o-dots .ch { display: inline-block; opacity: 1; }
+
+      #o-rest {
+        display: inline-block;
+        margin-left: 0;
+        white-space: pre;
+      }
+
+      #logo-w {
+        position: absolute;
+        left: 140px;
+        top: 864px;
+        width: 800px;
+        height: 191px;
+        transform-origin: 50% 50%;
+      }
+
+      #logo-w img {
+        display: block;
+        width: 800px;
+        height: auto;
+      }
+
+      #logo-sweep {
+        position: absolute;
+        left: 140px;
+        top: 864px;
+        width: 800px;
+        height: 191px;
+        overflow: hidden;
+        border-radius: 20px;
+      }
+
+      #logo-sweep i {
+        position: absolute;
+        left: -300px;
+        top: -100px;
+        width: 280px;
+        height: 400px;
+        transform: rotate(20deg);
+        background: linear-gradient(90deg, rgba(5, 227, 247, 0) 0%, rgba(5, 227, 247, 0.8) 50%, rgba(5, 227, 247, 0) 100%);
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="52.6"
+      data-width="1080"
+      data-height="1920"
+    >
+      <!-- ============================================================ BACKDROP -->
+      <div id="bg" class="clip" data-start="0" data-duration="52.6" data-track-index="0">
+        <div id="bg-base"></div>
+        <div id="bg-blobs">
+          <div class="blob" id="blob-a"></div>
+          <div class="blob" id="blob-b"></div>
+          <div class="blob" id="blob-c"></div>
+          <div class="blob" id="blob-d"></div>
+        </div>
+        <div id="bg-grid"></div>
+        <div id="bg-sweep"></div>
+        <div id="bg-vignette"></div>
+      </div>
+
+      <!-- ============================================================ 1 · HOOK -->
+      <section id="s1" class="clip" data-start="0" data-duration="4.6" data-track-index="1">
+        <div class="cam" id="s1-cam">
+          <div class="line s1w" style="top: 890px"><span class="w">Someone</span></div>
+          <div class="line s1w" style="top: 890px"><span class="w">somewhere</span></div>
+          <div class="line s1w" style="top: 890px"><span class="w">just</span></div>
+          <div class="line s1w" style="top: 890px"><span class="w">bought</span></div>
+          <div class="line s1w" style="top: 890px"><span class="w">an&nbsp;<span class="u-cyan" id="s1-esim">eSIM<i class="ul"></i></span></span></div>
+        </div>
+      </section>
+
+      <!-- ============================================================ ROLE PILL -->
+      <div id="pill-layer" class="clip" data-start="4.4" data-duration="42" data-track-index="9">
+        <div id="pill-w">
+          <div id="pill" class="hide">
+            <div id="pill-dot"></div>
+            <div class="pill-txt" id="pill-someone">SOMEONE</div>
+            <div class="pill-txt hide" id="pill-you">YOU</div>
+          </div>
+          <div id="pill-ring" class="hide"></div>
+        </div>
+      </div>
+
+      <!-- ============================================================ 2 · DESTINATION -->
+      <section id="s2" class="clip" data-start="4.5" data-duration="5.9" data-track-index="2">
+        <div class="cam" id="s2-cam">
+          <div class="line" id="s2-line" style="top: 860px">
+            <span class="w">Picks </span><span class="w">a</span><br /><span class="w">destination.</span>
+          </div>
+
+          <div class="card hide" id="search">
+            <div id="search-title">Select your destination</div>
+            <div id="field">
+              <div id="field-glow"></div>
+              <svg id="mag" viewBox="0 0 40 40"><circle cx="17" cy="17" r="12" fill="none" stroke="#5b6970" stroke-width="4"/><path d="M26 26 L35 35" stroke="#5b6970" stroke-width="4" stroke-linecap="round"/></svg>
+              <span id="ph">Where do you want to go?</span>
+              <span id="typed">United States</span>
+              <span id="caret" class="hide"></span>
+            </div>
+            <div id="chips">
+              <div class="chip"><span class="flag jp"></span>Japan</div>
+              <div class="chip"><span class="flag kr"></span>South Korea</div>
+              <div class="chip"><span class="flag sg"></span>Singapore</div>
+            </div>
+            <div id="results" class="hide">
+              <div class="lbl">Results</div>
+              <div class="row"><span class="flag us"></span>United States<span class="chev">›</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ 3 · ADD FUNDS -->
+      <section id="s3" class="clip" data-start="10.3" data-duration="7.5" data-track-index="3">
+        <div class="cam" id="s3-cam">
+          <div class="line" id="s3-line" style="top: 912px">
+            <span class="w">Adds </span><span class="w"><span class="hl">$20</span>.</span>
+          </div>
+
+          <div class="card hide" id="funds">
+            <div class="tabs">
+              <div class="tab">Data</div>
+              <div class="tab">Data and calls</div>
+              <div class="tab on">Add Funds</div>
+            </div>
+            <div id="funds-h">Add funds, pay for what you use and save the remaining balance for next trips.</div>
+            <div id="amt"><span id="amt-0">0</span><span id="amt-v" class="hide">20</span><span class="cur">$</span></div>
+            <div id="presets">
+              <div class="pre"><span>$5</span></div>
+              <div class="pre" id="pre-20"><i class="fill"></i><span id="pre-20-txt">$20</span></div>
+              <div class="pre"><span>$50</span></div>
+              <div class="pre"><span>$100</span></div>
+            </div>
+            <div id="price">Data in United States <span class="tag">$2.33/GB</span></div>
+            <div id="conv">
+              <div class="usd hide" id="conv-usd"><span class="coin">$</span>20 <span class="unit">USD</span></div>
+              <div class="arrow hide" id="conv-arrow"></div>
+              <div class="gb hide" id="conv-gb"><svg class="sig" viewBox="0 0 34 34"><path d="M7 12 Q17 2 27 12" fill="none" stroke="#0b1114" stroke-width="3.5" stroke-linecap="round"/><path d="M11 17 Q17 11 23 17" fill="none" stroke="#0b1114" stroke-width="3.5" stroke-linecap="round"/><circle cx="17" cy="23" r="3.5" fill="#0b1114"/></svg><span id="gb-v">0.00</span><span class="unit">GB</span></div>
+            </div>
+            <div class="btn cyan" id="funds-btn">Choose</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ 4 · PAYS -->
+      <section id="s4" class="clip" data-start="17.6" data-duration="3.9" data-track-index="4">
+        <div class="cam" id="s4-cam">
+          <div class="line" id="s4-line" style="top: 440px">
+            <span class="w">Pays. </span><span class="w">Done.</span>
+          </div>
+          <div class="check-w hide" id="s4-check" style="left: 400px; top: 820px">
+            <div class="check-ring" id="s4-ring"></div>
+            <div class="check-c"></div>
+            <svg viewBox="0 0 100 100"><path id="s4-path" d="M28 52 L45 68 L74 36"/></svg>
+            <i class="pt"></i><i class="pt c"></i><i class="pt"></i><i class="pt c"></i><i class="pt"></i><i class="pt c"></i><i class="pt"></i><i class="pt c"></i><i class="pt"></i><i class="pt c"></i><i class="pt"></i><i class="pt c"></i><i class="pt"></i><i class="pt c"></i>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ 5 · FLIP TO YOU -->
+      <section id="s5" class="clip" data-start="21.4" data-duration="3.7" data-track-index="5">
+        <div class="cam" id="s5-cam">
+          <div class="line" id="s5-l1" style="top: 912px">
+            <span class="w">You </span><span class="w">bought </span><span class="w">once.</span>
+          </div>
+          <div class="line" id="s5-l2" style="top: 912px">
+            <span class="w">Weeks </span><span class="w">ago.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ 6 · CARDS -->
+      <section id="s6" class="clip" data-start="25.0" data-duration="3.8" data-track-index="6">
+        <div class="cam" id="s6-cam">
+          <div class="card hide" id="card-a">
+            <div class="mini-pill dark"><i></i>SOMEONE</div>
+            <div class="card-big">Their purchase</div>
+            <div class="card-sub">$20 · United States eSIM</div>
+          </div>
+          <div id="link" class="hide"></div>
+          <div id="link-dot" class="hide"></div>
+          <div class="card hide" id="card-b">
+            <div class="mini-pill cyan"><i></i>YOU</div>
+            <div class="card-big">Your balance $4.19</div>
+            <div class="card-sub">Revenue sharing</div>
+          </div>
+          <div class="line sm" id="s6-line" style="top: 1330px; line-height: 1.2">
+            <span class="w">Their </span><span class="w">purchase </span><span class="w">pays</span><br /><span class="w">into </span><span class="w">your </span><span class="w">balance.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ 7 · REVENUE -->
+      <section id="s7" class="clip" data-start="28.7" data-duration="7.7" data-track-index="7">
+        <div class="cam" id="s7-cam">
+          <div class="card hide" id="rev">
+            <div id="rev-glow"></div>
+            <div class="lbl">Revenue sharing balance</div>
+            <div id="rev-amt">$4.<span class="odo"><span class="strip" id="odo-a"></span></span><span class="odo"><span class="strip" id="odo-b"></span></span></div>
+            <div class="btn cyan" id="rev-btn">Withdraw</div>
+            <div id="rev-stats"><span><b>$172.8<span class="odo-s"><span class="strip" id="odo-c"></span></span></b> total earned</span><span><b>131</b> eligible purchases</span></div>
+          </div>
+          <div id="plus" class="hide">+$0.01</div>
+
+          <div class="line mid" id="s7-l1" style="top: 520px">
+            <span class="w">Someone </span><span class="w">just </span><span class="w">bought.</span>
+          </div>
+          <div class="line mid" id="s7-l2" style="top: 520px">
+            <span class="w">You </span><span class="w">earn </span><span class="w">a </span><span class="w">share.</span>
+          </div>
+          <div class="line sm" id="s7-l3" style="top: 380px; line-height: 1.2">
+            <span class="w">Get </span><span class="w">up </span><span class="w">to </span><span class="w"><span class="hl">50%</span> </span><span class="w">of </span><span class="w">RoamFi</span><br /><span class="w">revenue </span><span class="w">from </span><span class="w">every</span><br /><span class="w">purchase </span><span class="w">made </span><span class="w">by </span><span class="w">others.</span>
+          </div>
+          <div id="tag" class="hide"><span>Automatic</span><i></i><span>Instant</span><i></i><span>No action needed</span></div>
+        </div>
+      </section>
+
+      <!-- ============================================================ 8 · PITCH -->
+      <section id="s8" class="clip" data-start="36.1" data-duration="3.9" data-track-index="8">
+        <div class="cam" id="s8-cam">
+          <div class="line" id="s8-l1" style="top: 912px">
+            <span class="w"><span class="strike">No referral link.<i class="sl" id="sl1"></i></span></span>
+          </div>
+          <div class="line" id="s8-l2" style="top: 912px">
+            <span class="w"><span class="strike">No sign-up.<i class="sl" id="sl2"></i></span></span>
+          </div>
+          <div class="line mid" id="s8-l3" style="top: 868px; line-height: 1.15">
+            <span class="w">Just </span><span class="w">buy </span><span class="w">once </span><span class="w">—</span><br /><span class="w">earn </span><span class="w">for </span><span class="w" id="w365"><span class="hl">365</span> </span><span class="w">days.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ 9 · CASH OUT -->
+      <section id="s9" class="clip" data-start="39.8" data-duration="4.3" data-track-index="10">
+        <div class="cam" id="s9-cam">
+          <div class="card hide" id="wd">
+            <div class="lbl caps" id="wd-from" style="position: absolute; left: 40px">From</div>
+            <div class="wd-row" id="wd-row1"><i class="sel" id="wd-sel1"></i><span class="tick" id="wd-tick1"><svg viewBox="0 0 20 20"><path d="M5 10.5 L8.5 14 L15 6.5" fill="none" stroke="#0b1114" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Revenue sharing balance<span class="val">4.22</span></div>
+            <div class="wd-row" id="wd-row2"><span class="tick off"></span>Referral earnings balance<span class="val">0.68</span></div>
+            <div id="wd-amtl"><span class="lbl caps">Amount</span><span class="lbl">Available: 4.90</span></div>
+            <div id="wd-amt"><span class="dol">$</span><span id="wd-typed">3.22</span><span class="caret2 hide" id="wd-caret"></span><span class="max">MAX</span></div>
+            <div class="lbl caps" id="wd-tol">To</div>
+            <div id="wd-pp"><i class="sel" id="wd-sel3"></i><div class="pp-logo"><img src="assets/img/paypal-logo.png" alt="PayPal" /></div><div><div class="pp-t">PayPal</div><div class="pp-s">Instant transfer</div></div></div>
+            <div class="btn black" id="wd-btn"><i class="press" id="wd-press"></i><span>Confirm Withdraw</span></div>
+          </div>
+        </div>
+        <div id="s9-txt">
+          <div class="line" id="s9-l1" style="top: 780px">
+            <span class="w">Cash </span><span class="w">out </span><span class="w">to </span><span class="w">PayPal.</span>
+          </div>
+          <div class="line mid" id="s9-l2" style="top: 900px; color: var(--ink2)">
+            <span class="w">Instant </span><span class="w">transfer.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ 10 · SENT -->
+      <section id="s10" class="clip" data-start="44.0" data-duration="2.5" data-track-index="11">
+        <div class="cam" id="s10-cam">
+          <div class="check-w hide" id="sent-check">
+            <div class="check-ring" id="s10-ring"></div>
+            <div class="check-c"></div>
+            <svg viewBox="0 0 100 100"><path id="s10-path" d="M28 52 L45 68 L74 36"/></svg>
+            <i class="pt"></i><i class="pt c"></i><i class="pt"></i><i class="pt c"></i><i class="pt"></i><i class="pt c"></i><i class="pt"></i><i class="pt c"></i><i class="pt"></i><i class="pt c"></i><i class="pt"></i><i class="pt c"></i><i class="pt"></i><i class="pt c"></i>
+          </div>
+          <div id="sent-t1" class="hide">Withdrawal sent</div>
+          <div id="sent-t2" class="hide"><b>$3.22</b> to PayPal</div>
+          <div class="card hide" id="notif">
+            <div class="pp-logo"><img src="assets/img/paypal-logo.png" alt="PayPal" /></div>
+            <div class="body">
+              <div class="nt">PayPal <span>now</span></div>
+              <div class="nb">You received&nbsp;<b id="notif-amt">+$3.22</b></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ 11 · OUTRO TEXT -->
+      <section id="s11" class="clip" data-start="46.2" data-duration="3.9" data-track-index="12">
+        <div class="cam" id="s11-cam">
+          <div id="outro-g" class="hide">
+            <span id="o-esim">eSIM<span id="o-dots"><span class="ch">.</span><span class="ch">.</span><span class="ch">.</span></span></span><span id="o-rest"> that pays you back</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ 12 · LOGO -->
+      <section id="s12" class="clip" data-start="49.9" data-duration="2.7" data-track-index="13">
+        <div class="cam" id="s12-cam">
+          <div id="logo-w" class="hide"><img src="assets/img/roamfi-logo.png" alt="RoamFi" /></div>
+          <div id="logo-sweep"><i id="logo-sweep-i"></i></div>
+        </div>
+      </section>
+
+      <!-- ============================================================ AUDIO -->
+      <audio id="music" src="assets/audio/music.mp3" data-start="0" data-duration="52.6" data-track-index="20" data-volume="1"></audio>
+      <audio id="sfx-chime" src="assets/sfx/chime.mp3" data-start="44.47" data-duration="1.9" data-track-index="21" data-volume="0.55"></audio>
+    </div>
+
+    <script>
+      (function () {
+        "use strict";
+
+        const $ = (s) => document.querySelector(s);
+        const $$ = (s) => Array.from(document.querySelectorAll(s));
+
+        /* ----------------------------------------------------- beat grid
+           Detected by `hyperframes beats` on assets/audio/music.mp3:
+           226 onsets, uniform 0.2308s spacing (eighth notes at 130 BPM),
+           first onset 0.165s. Strong phrase downbeats every 16 eighths
+           from index 28 (6.63s). Every cue below is authored as a grid
+           index so the edit follows the track, not a clock. */
+        const b = (n) => Math.round((0.165 + n * 0.230769) * 1000) / 1000;
+        const E = 0.2308; // one eighth
+        const Q = 0.4615; // one quarter
+
+        const tl = gsap.timeline({ paused: true });
+
+        function ft(t, from, to, at) {
+          tl.fromTo(t, from, Object.assign({}, to, { immediateRender: false }), at);
+        }
+
+        function splitChars(el) {
+          const text = el.textContent;
+          el.textContent = "";
+          const out = [];
+          for (const c of text) {
+            const s = document.createElement("span");
+            s.className = "ch";
+            s.textContent = c;
+            el.appendChild(s);
+            out.push(s);
+          }
+          return out;
+        }
+
+        function buildStrip(el, digits) {
+          for (const d of digits) {
+            const s = document.createElement("span");
+            s.textContent = d;
+            el.appendChild(s);
+          }
+        }
+
+        /* --------------------------------------------- motion vocabulary */
+
+        const OFF = { left: { x: -900 }, right: { x: 900 }, up: { y: -700 }, down: { y: 700 } };
+
+        // Words of a .line fly in from an edge with stagger + spring.
+        function lineIn(sel, at, from, o) {
+          o = o || {};
+          const off = OFF[from] || OFF.left;
+          const words = $$(sel + " .w");
+          const st = { each: o.stagger == null ? 0.07 : o.stagger, from: from === "left" ? "end" : "start" };
+          const dur = o.dur || 0.62;
+          // Horizontal travel eases out without overshoot (words never collide);
+          // the spring lives on scale / rotation / vertical drop.
+          ft(words, { x: off.x || 0 }, { x: 0, duration: dur, ease: "expo.out", stagger: st }, at);
+          ft(
+            words,
+            { autoAlpha: 0, y: off.y || 0, rotation: o.rot == null ? (from === "up" || from === "down" ? 0 : from === "left" ? -6 : 6) : o.rot, scale: 0.82 },
+            { autoAlpha: 1, y: 0, rotation: 0, scale: 1, duration: dur, ease: o.ease || "back.out(1.7)", stagger: st },
+            at
+          );
+        }
+
+        // Words of a .line fly out toward an edge (opposite of entrance).
+        function lineOut(sel, at, to, o) {
+          o = o || {};
+          const off = OFF[to] || OFF.right;
+          const words = $$(sel + " .w");
+          ft(
+            words,
+            { autoAlpha: 1, x: 0, y: 0, rotation: 0, scale: 1, filter: "blur(0px)" },
+            { autoAlpha: 0, x: off.x || 0, y: off.y || 0, rotation: to === "left" ? -4 : to === "right" ? 4 : 0, scale: o.scale == null ? 0.9 : o.scale, filter: "blur(6px)", duration: o.dur || 0.34, ease: "power3.in", stagger: { each: o.stagger == null ? 0.035 : o.stagger, from: to === "right" ? "end" : "start" } },
+            at
+          );
+        }
+
+        // Generic object fly-in with overshoot.
+        function fly(sel, at, o) {
+          o = o || {};
+          const from = { autoAlpha: 0, x: o.x || 0, y: o.y || 0, rotation: o.rot || 0, scale: o.scale == null ? 1 : o.scale };
+          const to = { autoAlpha: 1, x: 0, y: 0, rotation: 0, scale: 1, duration: o.dur || 0.7, ease: o.ease || "back.out(1.5)" };
+          if (o.blur) {
+            from.filter = "blur(" + o.blur + "px)";
+            to.filter = "blur(0px)";
+          }
+          if (o.stagger) to.stagger = o.stagger;
+          ft(sel, from, to, at);
+        }
+
+        function out(sel, at, o) {
+          o = o || {};
+          const from = { autoAlpha: 1, x: 0, y: 0, rotation: 0, scale: 1 };
+          const to = { autoAlpha: 0, x: o.x || 0, y: o.y || 0, rotation: o.rot || 0, scale: o.scale == null ? 1 : o.scale, duration: o.dur || 0.36, ease: o.ease || "power3.in" };
+          if (o.blur) {
+            from.filter = "blur(0px)";
+            to.filter = "blur(" + o.blur + "px)";
+          }
+          if (o.stagger) to.stagger = o.stagger;
+          ft(sel, from, to, at);
+        }
+
+        // Fly INTO the camera: scale up, blur, vanish — the cut.
+        function intoCam(sel, at, o) {
+          o = o || {};
+          ft(sel, { scale: o.from == null ? 1 : o.from, autoAlpha: 1, filter: "blur(0px)" }, { scale: o.to || 3.4, autoAlpha: 0, filter: "blur(18px)", duration: o.dur || 0.46, ease: "power2.in" }, at);
+        }
+
+        // Camera: bring composition point (px,py) to screen centre at scale s.
+        // Using the same helper for a pan (same s, new point) keeps the zoom
+        // level continuous — no zoom-out between spots inside one object.
+        function camTo(sel, px, py, s, at, dur, ease) {
+          tl.to(sel, { x: (540 - px) * s, y: (960 - py) * s, scale: s, duration: dur, ease: ease || "power3.inOut" }, at);
+        }
+
+        // Finite idle drift (bounded, seek-safe).
+        function idle(sel, at, until, o) {
+          o = o || {};
+          const half = (o.period || 2.6) / 2;
+          const n = Math.max(1, Math.floor((until - at) / half));
+          const from = {};
+          const to = { duration: half, ease: "sine.inOut", yoyo: true, repeat: n - 1 };
+          if (o.y != null) { from.y = 0; to.y = o.y; }
+          if (o.x != null) { from.x = 0; to.x = o.x; }
+          if (o.s != null) { from.scale = 1; to.scale = 1 + o.s; }
+          if (o.rot != null) { from.rotation = 0; to.rotation = o.rot; }
+          ft(sel, from, to, at);
+        }
+
+        // Scale pop 1 → peak → 1.
+        function pop(sel, at, peak, dur) {
+          tl.to(sel, { scale: peak || 1.12, duration: (dur || 0.3) * 0.4, ease: "power2.out" }, at);
+          tl.to(sel, { scale: 1, duration: (dur || 0.3) * 0.6, ease: "back.out(2)" }, at + (dur || 0.3) * 0.4);
+        }
+
+        // Check burst: circle in, ring, stroke draw, particle pop.
+        function burst(wrap, pathSel, ringSel, at) {
+          ft(wrap, { autoAlpha: 0, scale: 0.2, rotation: -25 }, { autoAlpha: 1, scale: 1, rotation: 0, duration: 0.6, ease: "elastic.out(1, 0.55)" }, at);
+          ft(pathSel, { strokeDashoffset: 110 }, { strokeDashoffset: 0, duration: 0.4, ease: "power2.out" }, at + 0.12);
+          ft(ringSel, { scale: 0.8, opacity: 0.9 }, { scale: 2.4, opacity: 0, duration: 0.7, ease: "power2.out" }, at + 0.05);
+          const pts = $$(wrap + " .pt");
+          pts.forEach((p, i) => {
+            const a = (i / pts.length) * Math.PI * 2 + 0.3;
+            const r = 190 + (i % 3) * 55;
+            ft(p, { x: 0, y: 0, opacity: 1, scale: 1 }, { x: Math.cos(a) * r, y: Math.sin(a) * r, opacity: 0, scale: 0.2, duration: 0.7 + (i % 4) * 0.06, ease: "power3.out" }, at + 0.04);
+          });
+        }
+
+        /* ================================================== BACKDROP: never still */
+
+        const END = 52.6;
+
+        // Blobs drift in over the intro, then wander for the whole piece.
+        ft("#bg-blobs", { opacity: 0, scale: 1.12 }, { opacity: 1, scale: 1, duration: 1.6, ease: "power2.out" }, 0);
+        idle("#blob-a", 0, END, { x: -200, y: 320, s: 0.16, period: 11 });
+        idle("#blob-b", 0, END, { x: 320, y: -300, s: 0.2, period: 13 });
+        idle("#blob-c", 0, END, { x: -300, y: -420, s: 0.28, period: 9 });
+        idle("#blob-d", 0, END, { x: 480, y: 360, s: 0.35, period: 7.5 });
+        idle("#bg-grid", 0, END, { x: 96, y: 60, period: 16 });
+        // Light sweep crosses the frame every phrase and a half.
+        ft("#bg-sweep", { x: 0, rotation: 18 }, { x: 2100, rotation: 18, duration: 5.5, ease: "sine.inOut", repeat: 9, yoyo: true }, 0);
+        // Downbeat pulse: the whole light field breathes on every phrase hit.
+        [13, 28, 44, 60, 76, 92, 108, 124, 140, 156, 172, 188, 204].forEach((n) => {
+          tl.to("#bg-blobs", { scale: 1.045, duration: 0.1, ease: "power2.out" }, b(n));
+          tl.to("#bg-blobs", { scale: 1, duration: 0.55, ease: "power2.out" }, b(n) + 0.1);
+        });
+
+        /* ================================================== 1 · HOOK  (0 → 4.55) */
+
+        // Words fly in on quarter notes, alternating from below / above.
+        {
+          // One word at a time in the same centre spot: each flies in, holds,
+          // vanishes as the next lands. "an eSIM" lands on the first strong hit.
+          const words = $$(".s1w .w");
+          const ins = [b(2), b(5), b(8), b(10), b(13)];
+          words.forEach((w, i) => {
+            const at = ins[i];
+            const next = i < words.length - 1 ? ins[i + 1] : null;
+            const fromY = i % 2 ? -220 : 220;
+            ft(w, { autoAlpha: 0, y: fromY, scale: 0.55, rotation: i % 2 ? 6 : -6, filter: "blur(0px)" }, { autoAlpha: 1, y: 0, scale: 1, rotation: 0, duration: 0.42, ease: "back.out(1.8)" }, at);
+            if (next != null) {
+              ft(w, { autoAlpha: 1, scale: 1, filter: "blur(0px)" }, { autoAlpha: 0, scale: 1.5, filter: "blur(10px)", duration: 0.2, ease: "power2.in" }, next - 0.12);
+            }
+          });
+          // "eSIM" underline draws + punches right after the word lands.
+          ft("#s1-esim .ul", { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power3.out" }, b(14));
+          pop("#s1-esim", b(14), 1.14, 0.4);
+          idle("#s1-cam", 0, b(17), { y: -10, s: 0.02, period: 2 });
+          // Whole line whips off-screen left.
+          ft("#s1-cam", { x: 0, filter: "blur(0px)", autoAlpha: 1 }, { x: -2300, filter: "blur(14px)", autoAlpha: 0, duration: 0.38, ease: "power3.in" }, b(17));
+        }
+
+        /* ================================================== ROLE PILL (4.55 → 45.9) */
+
+        // First appearance: LARGE in the centre, then shrinks and flies to the corner.
+        const PILL_C = { x: 0, y: 809 }; // wrapper offset that centres the pill on screen (rest = top-centre)
+        tl.set("#pill-w", { x: PILL_C.x, y: PILL_C.y, scale: 3 }, 0);
+        fly("#pill", b(19), { y: 90, rot: -10, scale: 0.4, dur: 0.55, ease: "back.out(2)" });
+        tl.to("#pill-w", { x: 0, y: 0, scale: 1, duration: 0.55, ease: "power3.inOut" }, b(21));
+        idle("#pill", b(21) + 0.55, b(51), { y: -6, period: 3.2 });
+        // Camera goes tight inside the funds panel: pill darts off, returns as the panel leaves.
+        out("#pill", b(51), { x: -520, rot: -10, scale: 0.7, blur: 6, dur: 0.36 });
+        fly("#pill", b(75), { x: -520, rot: -10, scale: 0.7, blur: 6, dur: 0.5, ease: "back.out(1.8)" });
+        idle("#pill", b(75) + 0.5, b(88), { y: -6, period: 3.2 });
+
+        // YOU: pill glides to the centre and grows, morphs there on the downbeat,
+        // then shrinks and flies back to the corner.
+        tl.to("#pill-w", { x: PILL_C.x, y: PILL_C.y, scale: 3, duration: 0.5, ease: "power3.inOut" }, b(88));
+        tl.to("#pill-w", { x: PILL_C.x + 123, duration: 0.42, ease: "power3.inOut" }, b(92) + 0.08);
+        // YOU pill is narrower: rest 41px right so it stays centred on the frame.
+        tl.to("#pill-w", { x: 41, y: 0, scale: 1, duration: 0.5, ease: "power3.inOut" }, b(93));
+        // Morph SOMEONE → YOU on the phrase downbeat at 21.40.
+        {
+          const sc = splitChars($("#pill-someone"));
+          const yc = splitChars($("#pill-you"));
+          tl.set(sc, { opacity: 1 }, 0); // visible from the start
+          tl.set($("#pill-you"), { autoAlpha: 1 }, b(92));
+          ft(sc, { y: 0, opacity: 1 }, { y: -40, opacity: 0, duration: 0.22, ease: "power2.in", stagger: 0.025 }, b(92));
+          tl.set("#pill-someone", { autoAlpha: 0 }, b(92) + 0.45);
+          ft($("#pill"), { backgroundColor: "#0b0b0f", width: 250 }, { backgroundColor: "#05e3f7", width: 168, duration: 0.42, ease: "power3.inOut" }, b(92) + 0.08);
+          ft("#pill-dot", { backgroundColor: "#05e3f7", scale: 1 }, { backgroundColor: "#0b0b0f", scale: 1.25, duration: 0.42, ease: "power3.inOut" }, b(92) + 0.08);
+          ft(yc, { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "back.out(2.4)", stagger: 0.06 }, b(92) + 0.2);
+          ft("#pill-ring", { autoAlpha: 1, scale: 1 }, { autoAlpha: 0, scale: 2.2, duration: 0.6, ease: "power2.out" }, b(92));
+          pop("#pill", b(92) + 0.1, 1.12, 0.45);
+          idle("#pill", b(95), b(178), { y: -6, period: 3.2 });
+        }
+
+        // Tight inside the withdraw panel: pill darts off, back for the sent scene.
+        out("#pill", b(178), { x: -520, rot: -10, scale: 0.7, blur: 6, dur: 0.36 });
+        fly("#pill", b(190), { x: -520, rot: -10, scale: 0.7, blur: 6, dur: 0.55, ease: "back.out(1.8)" });
+        idle("#pill", b(190) + 0.55, b(198), { y: -6, period: 3.2 });
+        // Pill leaves with the sent scene.
+        out("#pill", b(198), { x: -500, rot: -10, scale: 0.7, blur: 8, dur: 0.4 });
+
+        /* ================================================== 2 · DESTINATION (4.55 → 10.32) */
+
+        lineIn("#s2-line", b(22), "left");
+        lineOut("#s2-line", b(27), "right");
+
+        // Search object flies in from the right on the phrase downbeat.
+        fly("#search", b(28), { x: 1400, rot: 6, scale: 0.9, dur: 0.75, ease: "back.out(1.3)" });
+        // Camera zooms into the field.
+        camTo("#s2-cam", 540, 880, 1.1, b(30), 0.8);
+        // Placeholder out, caret in, typing "United States" (13 chars, ~1.5s).
+        ft("#ph", { autoAlpha: 1, x: 0 }, { autoAlpha: 0, x: -30, duration: 0.25, ease: "power2.in" }, b(31));
+        // Caret is there from the moment the field appears, blinking at the left edge.
+        ft("#caret", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.05 }, b(28) + 0.3);
+        ft("#caret", { opacity: 1 }, { opacity: 0, duration: 0.23, repeat: 5, yoyo: true, ease: "steps(1)" }, b(28) + 0.4);
+        tl.set("#caret", { opacity: 1 }, b(32) - 0.02);
+        {
+          const chars = splitChars($("#typed"));
+          // Reveal by display so each glyph gains width as it is typed and the caret follows.
+          ft(chars, { display: "none" }, { display: "inline", duration: 0.001, stagger: 0.115 }, b(32));
+          ft("#caret", { opacity: 1 }, { opacity: 0, duration: 0.23, repeat: 7, yoyo: true, ease: "steps(1)" }, b(32) + 1.6);
+        }
+        // Hot-destination chips give way to the result row.
+        out("#chips", b(36), { y: 60, blur: 4, dur: 0.28 });
+        fly("#results", b(38), { y: 80, dur: 0.5, ease: "back.out(1.4)" });
+        // Field pulses cyan on the beat.
+        ft("#field-glow", { opacity: 0, scale: 1 }, { opacity: 1, scale: 1, duration: 0.12, ease: "power2.out" }, b(40));
+        tl.to("#field-glow", { opacity: 0, duration: 0.6, ease: "power2.out" }, b(40) + 0.15);
+        pop("#field", b(40), 1.03, 0.4);
+        // Object flies INTO the camera → cut on the downbeat.
+        intoCam("#s2-cam", b(42), { from: 1.1, to: 5.0, dur: 0.46 });
+
+        /* ================================================== 3 · ADD FUNDS (10.32 → 17.70) */
+
+        lineIn("#s3-line", b(44), "up", { stagger: 0.09, ease: "back.out(2)" });
+        pop("#s3-line .hl", b(46), 1.14, 0.35);
+        lineOut("#s3-line", b(50), "up");
+
+        // Funds panel flies up; camera tight immediately.
+        fly("#funds", b(51), { y: 1100, rot: -4, scale: 0.94, dur: 0.75, ease: "back.out(1.2)" });
+        camTo("#s3-cam", 540, 890, 1.2, b(51), 0.75);
+        // Zoom onto the preset row.
+        camTo("#s3-cam", 540, 888, 1.55, b(54), 0.6);
+        // "$20" selected: fill sweeps, text pops, amount field shows 20.
+        ft("#pre-20 .fill", { scale: 0 }, { scale: 1, duration: 0.32, ease: "back.out(1.6)" }, b(56));
+        pop("#pre-20", b(56), 1.1, 0.4);
+        ft("#amt-0", { autoAlpha: 1, y: 0 }, { autoAlpha: 0, y: -34, duration: 0.22, ease: "power2.in" }, b(56) + 0.05);
+        ft("#amt-v", { autoAlpha: 0, y: 34 }, { autoAlpha: 1, y: 0, duration: 0.32, ease: "back.out(2)" }, b(56) + 0.12);
+        // Phrase downbeat: PAN DOWN inside the panel, no zoom-out.
+        camTo("#s3-cam", 540, 1080, 1.55, b(60), 0.7);
+        // "$20 → 8.58 GB" animates in.
+        fly("#conv-usd", b(61), { x: -160, dur: 0.45, ease: "back.out(2)" });
+        ft("#conv-arrow", { autoAlpha: 0, scaleX: 0 }, { autoAlpha: 1, scaleX: 1, duration: 0.3, ease: "power3.out" }, b(62));
+        fly("#conv-gb", b(63), { x: 160, dur: 0.45, ease: "back.out(2)" });
+        {
+          const gb = { v: 0 };
+          const el = $("#gb-v");
+          tl.to(gb, { v: 8.58, duration: 0.92, ease: "power3.out", onUpdate: () => { el.textContent = gb.v.toFixed(2); } }, b(63));
+          tl.set(gb, { v: 8.58, onUpdate: () => { el.textContent = "8.58"; } }, b(63) + 0.93);
+        }
+        pop("#conv", b(67), 1.05, 0.4);
+        // Panel slides off left as the next scene enters.
+        ft("#funds", { x: 0, rotation: 0, autoAlpha: 1 }, { x: -1700, rotation: -3, autoAlpha: 0, duration: 0.42, ease: "power3.in" }, b(74));
+
+        /* ================================================== 4 · PAYS (17.70 → 21.40) */
+
+        {
+          const w = $$("#s4-line .w");
+          ft(w[0], { autoAlpha: 0, x: -700, y: -40, scale: 0.7, rotation: -8 }, { autoAlpha: 1, x: 0, y: 0, scale: 1, rotation: 0, duration: 0.45, ease: "back.out(1.1)" }, b(76));
+          ft(w[1], { autoAlpha: 0, x: 700, y: 40, scale: 0.7, rotation: 8 }, { autoAlpha: 1, x: 0, y: 0, scale: 1, rotation: 0, duration: 0.45, ease: "back.out(1.1)" }, b(78));
+        }
+        burst("#s4-check", "#s4-path", "#s4-ring", b(80));
+        // Camera pushes in on the check; text leaves.
+        lineOut("#s4-line", b(83), "up");
+        camTo("#s4-cam", 540, 960, 1.3, b(81), 1.1, "power1.inOut");
+        // Check flies INTO the camera early → the YOU pill takes the centre.
+        intoCam("#s4-cam", b(86), { from: 1.3, to: 5.5, dur: 0.46 });
+
+        /* ================================================== 5 · FLIP TO YOU (21.40 → 25.09) */
+
+        lineIn("#s5-l1", b(94), "right");
+        lineOut("#s5-l1", b(99), "left");
+        // "Weeks ago." drops in with bounce.
+        lineIn("#s5-l2", b(100), "up", { ease: "bounce.out", dur: 0.7, stagger: 0.1 });
+        lineOut("#s5-l2", b(106), "down", { dur: 0.3 });
+        idle("#s5-cam", b(92), b(108), { s: 0.03, period: 3.6 });
+
+        /* ================================================== 6 · CARDS (25.09 → 28.78) */
+
+        fly("#card-a", b(108), { y: -1300, rot: -8, scale: 0.85, dur: 0.7, ease: "back.out(1.4)" });
+        fly("#card-b", b(109), { y: 1300, rot: 8, scale: 0.85, dur: 0.7, ease: "back.out(1.4)" });
+        idle("#card-a", b(110), b(122), { x: -10, rot: -0.6, period: 2.4 });
+        idle("#card-b", b(110), b(122), { x: 10, rot: 0.6, period: 2.4 });
+        // Connector draws A → B and a share-dot travels it.
+        ft("#link", { autoAlpha: 0, scaleY: 0 }, { autoAlpha: 1, scaleY: 1, duration: 0.4, ease: "power3.out" }, b(111));
+        ft("#link-dot", { autoAlpha: 0, y: 0, scale: 0.5 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.15 }, b(112));
+        tl.to("#link-dot", { y: 84, duration: 0.5, ease: "power2.inOut" }, b(112) + 0.15);
+        tl.to("#link-dot", { y: 0, duration: 0.01 }, b(114) + 0.2);
+        tl.to("#link-dot", { y: 84, duration: 0.5, ease: "power2.inOut" }, b(116));
+        pop("#card-b", b(114) + 0.35, 1.05, 0.4);
+        pop("#card-b", b(118), 1.05, 0.4);
+        {
+          // Two rows: top row drops from above, bottom row rises from below.
+          const ws = $$("#s6-line .w");
+          ws.forEach((w, i) => {
+            const top = i < 3;
+            ft(w, { autoAlpha: 0, y: top ? -420 : 420, scale: 0.8, rotation: top ? -4 : 4 }, { autoAlpha: 1, y: 0, scale: 1, rotation: 0, duration: 0.5, ease: top ? "back.out(1.3)" : "back.out(1.05)" }, b(111) + i * 0.05);
+          });
+        }
+        // All slide out.
+        out("#card-a", b(122), { y: -1300, rot: -8, blur: 8, dur: 0.42 });
+        out("#card-b", b(122), { y: 1300, rot: 8, blur: 8, dur: 0.42 });
+        out("#link", b(122), { scale: 0.3, dur: 0.3 });
+        tl.to("#link-dot", { autoAlpha: 0, scale: 0.3, duration: 0.3, ease: "power3.in" }, b(122));
+        {
+          const ws = $$("#s6-line .w");
+          ws.forEach((w, i) => {
+            const top = i < 3;
+            ft(w, { autoAlpha: 1, y: 0, filter: "blur(0px)" }, { autoAlpha: 0, y: top ? -500 : 500, filter: "blur(6px)", duration: 0.3, ease: "power3.in" }, b(122) + i * 0.02);
+          });
+        }
+
+        /* ================================================== 7 · REVENUE (28.78 → 36.16) */
+
+        // Odometer strips: cents tens (1→2) and cents ones (9→0).
+        buildStrip($("#odo-a"), "0123456789");
+        buildStrip($("#odo-b"), "01234567890");
+        buildStrip($("#odo-c"), "45");
+        tl.set("#odo-a", { y: -120 * 1 }, 0);
+        tl.set("#odo-b", { y: -120 * 9 }, 0);
+        tl.set("#odo-c", { y: 0 }, 0);
+
+        fly("#rev", b(124), { y: 900, rot: 6, scale: 0.8, dur: 0.75, ease: "back.out(1.3)" });
+        idle("#rev", b(127), b(140), { y: -8, rot: 0.4, period: 3 });
+
+        lineIn("#s7-l1", b(127), "left", { stagger: 0.08 });
+        lineOut("#s7-l1", b(132), "right");
+
+        // The tick: $4.19 → $4.20 with pop + cyan glow + "+$0.01".
+        tl.to("#odo-a", { y: -120 * 2, duration: 0.42, ease: "back.out(1.2)" }, b(133));
+        tl.to("#odo-b", { y: -120 * 10, duration: 0.42, ease: "back.out(1.2)" }, b(133));
+        tl.to("#odo-c", { y: -24, duration: 0.42, ease: "back.out(1.2)" }, b(133) + 0.1);
+        pop("#rev", b(133), 1.07, 0.45);
+        ft("#rev-glow", { opacity: 0 }, { opacity: 1, duration: 0.12, ease: "power2.out" }, b(133));
+        tl.to("#rev-glow", { opacity: 0, duration: 0.9, ease: "power2.out" }, b(133) + 0.15);
+        fly("#plus", b(133), { x: 300, y: 60, scale: 0.6, dur: 0.5, ease: "back.out(2.4)" });
+        ft("#plus", { y: 0, autoAlpha: 1 }, { y: -110, autoAlpha: 0, duration: 0.9, ease: "power1.in" }, b(136));
+
+        lineIn("#s7-l2", b(134), "right", { stagger: 0.08 });
+        lineOut("#s7-l2", b(139), "left");
+
+        // Big line on the phrase downbeat: card recedes, line assembles.
+        tl.to("#rev", { y: 250, scale: 0.72, duration: 0.6, ease: "power3.inOut" }, b(140));
+        ft("#rev", { y: 250, scale: 0.72, rotation: 0 }, { y: 238, scale: 0.74, rotation: 0.4, duration: 1.5, ease: "sine.inOut", yoyo: true, repeat: 2 }, b(143));
+        {
+          const ws = $$("#s7-l3 .w");
+          ws.forEach((w, i) => {
+            const top = i < 6;
+            ft(w, { autoAlpha: 0, y: top ? -520 : 420, scale: 0.8, rotation: top ? -4 : 4 }, { autoAlpha: 1, y: 0, scale: 1, rotation: 0, duration: 0.5, ease: top ? "back.out(1.3)" : "back.out(1.05)" }, b(140) + i * 0.045);
+          });
+        }
+        pop("#s7-l3 .hl", b(143), 1.18, 0.4);
+        lineOut("#s7-l3", b(148), "up", { stagger: 0.02, dur: 0.3 });
+
+        fly("#tag", b(149), { y: 500, scale: 0.8, dur: 0.6, ease: "back.out(1.8)" });
+        // Everything zooms out and clears on the downbeat.
+        ft("#s7-cam", { scale: 1, autoAlpha: 1, filter: "blur(0px)" }, { scale: 0.55, autoAlpha: 0, filter: "blur(10px)", duration: 0.4, ease: "power3.in" }, b(155));
+
+        /* ================================================== 8 · PITCH (36.16 → 39.86) */
+
+        lineIn("#s8-l1", b(156), "left", { dur: 0.5 });
+        ft("#sl1", { scaleX: 0 }, { scaleX: 1, duration: 0.22, ease: "power4.out" }, b(158));
+        pop("#s8-l1 .w", b(158), 0.96, 0.3);
+        lineOut("#s8-l1", b(160), "right", { dur: 0.28 });
+
+        lineIn("#s8-l2", b(160), "right", { dur: 0.5 });
+        ft("#sl2", { scaleX: 0 }, { scaleX: 1, duration: 0.22, ease: "power4.out" }, b(162));
+        pop("#s8-l2 .w", b(162), 0.96, 0.3);
+        lineOut("#s8-l2", b(164), "left", { dur: 0.28 });
+
+        // Punch line assembles from alternating edges.
+        {
+          const ws = $$("#s8-l3 .w");
+          ws.forEach((w, i) => {
+            ft(w, { autoAlpha: 0, y: i % 2 ? -220 : 220, scale: 0.75, rotation: i % 2 ? 6 : -6 }, { autoAlpha: 1, y: 0, scale: 1, rotation: 0, duration: 0.5, ease: "back.out(1.8)" }, b(164) + i * 0.06);
+          });
+        }
+        pop("#w365 .hl", b(168), 1.32, 0.5);
+        idle("#s8-cam", b(156), b(171), { s: 0.03, period: 3.7 });
+        // Whip away.
+        ft("#s8-cam", { x: 0, autoAlpha: 1, filter: "blur(0px)" }, { x: -2400, autoAlpha: 0, filter: "blur(16px)", duration: 0.3, ease: "power3.in" }, b(171));
+
+        /* ================================================== 9 · CASH OUT (39.86 → 43.55) */
+
+        // "Cash out to PayPal." centred, then "Instant transfer." joins on a second line.
+        lineIn("#s9-l1", b(172), "left", { stagger: 0.06 });
+        lineIn("#s9-l2", b(174), "right", { stagger: 0.08 });
+        // Both lines float UP (fast out) as the phone rises from the bottom.
+        ft("#s9-txt", { y: 0, autoAlpha: 1, filter: "blur(0px)" }, { y: -1000, autoAlpha: 0, filter: "blur(8px)", duration: 0.5, ease: "power2.out" }, b(178) - 0.2);
+        fly("#wd", b(178), { y: 1900, scale: 0.96, dur: 0.85, ease: "back.out(1.05)" });
+        // Camera goes tight on the FROM row.
+        camTo("#s9-cam", 540, 594, 1.55, b(180), 0.7);
+        // Selected: "Revenue sharing balance 4.22".
+        ft("#wd-sel1", { opacity: 0 }, { opacity: 1, duration: 0.2 }, b(182));
+        pop("#wd-tick1", b(182), 1.4, 0.4);
+        // PAN DOWN (same zoom) to the amount field; "3.22" types.
+        camTo("#s9-cam", 540, 874, 1.55, b(184), 0.45);
+        ft("#wd-caret", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.05 }, b(184) + 0.2);
+        {
+          const chars = splitChars($("#wd-typed"));
+          ft(chars, { display: "none" }, { display: "inline", duration: 0.001, stagger: 0.1 }, b(185));
+        }
+        pop("#wd-amt .max", b(186) + 0.15, 1.25, 0.35);
+        // PAN DOWN to the PayPal row.
+        camTo("#s9-cam", 540, 1053, 1.55, b(187), 0.4);
+        ft("#wd-sel3", { opacity: 0 }, { opacity: 1, duration: 0.2 }, b(188));
+        pop("#wd-pp", b(188), 1.03, 0.3);
+        // Zoom into confirm; button fills cyan as it's pressed.
+        camTo("#s9-cam", 540, 1176, 1.7, b(189), 0.32, "power3.in");
+        ft("#wd-press", { scaleX: 0 }, { scaleX: 1, duration: 0.2, ease: "power3.out" }, b(189) + 0.18);
+        tl.to("#wd-btn span", { color: "#0b1114", duration: 0.15 }, b(189) + 0.18);
+
+        /* ================================================== 10 · SENT (43.55 → 46.32) */
+
+        burst("#sent-check", "#s10-path", "#s10-ring", b(190));
+        fly("#sent-t1", b(190) + 0.15, { y: 90, dur: 0.5, ease: "back.out(1.8)" });
+        fly("#sent-t2", b(191), { y: 90, dur: 0.5, ease: "back.out(1.8)" });
+        pop("#sent-t2 b", b(192), 1.12, 0.35);
+        // PayPal notification from the top-right corner ON the beat (chime lands here too).
+        fly("#notif", b(192), { x: 700, y: -500, rot: 12, scale: 0.6, dur: 0.6, ease: "back.out(1.7)" });
+        pop("#notif-amt", b(193), 1.3, 0.4);
+        idle("#notif", b(194), b(198), { y: 6, rot: -0.5, period: 1.8 });
+        idle("#s10-cam", b(190), b(198), { s: 0.04, period: 2.4 });
+        // All fly out.
+        out("#sent-check", b(198), { y: -700, scale: 0.4, rot: -30, blur: 8, dur: 0.4 });
+        out("#sent-t1", b(198), { y: 300, blur: 8, dur: 0.36 });
+        out("#sent-t2", b(198) + 0.04, { y: 300, blur: 8, dur: 0.36 });
+        out("#notif", b(198), { x: 700, y: -500, rot: 10, scale: 0.6, blur: 8, dur: 0.4 });
+
+        /* ================================================== 11 · OUTRO TEXT (46.32 → 50.01) */
+
+        {
+          const rest = $("#o-rest");
+          const restChars = splitChars(rest);
+          tl.set("#o-rest", { x: 70 }, 0);
+          // Group starts shifted right so "eSIM..." sits centre-left.
+          ft("#outro-g", { autoAlpha: 0, x: 60, scale: 0.6, rotation: -4 }, { autoAlpha: 1, x: 60, scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2)" }, b(200));
+          // Dots bounce in behind.
+          ft("#o-dots .ch", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: "back.out(2.5)", stagger: 0.08 }, b(200) + 0.25);
+          // "that pays you back" types in to the right on the downbeat.
+          ft(restChars, { opacity: 0 }, { opacity: 1, duration: 0.01, stagger: 0.06 }, b(204));
+          // Dots vanish, "eSIM" glides left so the phrase sits balanced.
+          ft("#o-dots .ch", { opacity: 1, scale: 1 }, { opacity: 0, scale: 0, duration: 0.2, ease: "power2.in", stagger: 0.04 }, b(209));
+          ft("#o-rest", { x: 70 }, { x: 0, duration: 0.55, ease: "power3.inOut" }, b(209) + 0.1);
+          tl.to("#outro-g", { x: 0, duration: 0.55, ease: "power3.inOut" }, b(209) + 0.1);
+          // Hold one beat, then fly out.
+          ft("#outro-g", { y: 0, autoAlpha: 1, filter: "blur(0px)" }, { y: -260, autoAlpha: 0, filter: "blur(10px)", duration: 0.42, ease: "power3.in" }, b(214));
+        }
+
+        /* ================================================== 12 · LOGO (50.01 → end) */
+
+        fly("#logo-w", b(216), { y: 320, scale: 0.55, dur: 0.85, ease: "back.out(1.4)" });
+        // Soft cyan light sweep across the logo.
+        ft("#logo-sweep-i", { x: 0, rotation: 20 }, { x: 1250, rotation: 20, duration: 1.1, ease: "power2.inOut" }, b(218));
+        tl.to("#logo-w", { scale: 1.04, duration: END - b(219), ease: "sine.out" }, b(219));
+
+        // Pad to the full length so the root timeline spans the soundtrack.
+        tl.to({}, { duration: 0.01 }, END - 0.01);
+
+        window.__timelines = window.__timelines || {};
+        window.__timelines["main"] = tl;
+      })();
+    </script>
+  </body>
+</html>
