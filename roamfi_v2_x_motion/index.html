@@ -130,10 +130,19 @@
         z-index: 80;
       }
 
-      #pill {
+      #pill-w {
         position: absolute;
         left: 150px;
         top: 108px;
+        width: 250px;
+        height: 62px;
+        transform-origin: 50% 50%;
+      }
+
+      #pill {
+        position: absolute;
+        left: 0;
+        top: 0;
         height: 62px;
         width: 250px;
         border-radius: 31px;
@@ -177,8 +186,8 @@
 
       #pill-ring {
         position: absolute;
-        left: 150px;
-        top: 108px;
+        left: 0;
+        top: 0;
         width: 250px;
         height: 62px;
         border-radius: 31px;
@@ -201,6 +210,7 @@
       }
 
       .line.mid { font-size: 80px; }
+      .line.s1w { font-size: 132px; letter-spacing: -0.045em; }
       .line.sm { font-size: 64px; letter-spacing: -0.025em; }
 
       .w {
@@ -357,7 +367,14 @@
         height: 46px;
         background: var(--cyan-deep);
         border-radius: 2px;
-        margin-left: -14px;
+        margin-left: -19px;
+      }
+
+      /* untyped characters take no width, so the caret always sits right
+         after the last typed glyph */
+      #typed .ch {
+        display: none;
+        opacity: 1;
       }
 
       #chips {
@@ -512,6 +529,17 @@
         font-size: 64px;
         font-weight: 500;
       }
+
+      #amt-0,
+      #amt-v {
+        position: absolute;
+        left: 36px;
+        top: 50%;
+        margin-top: -40px;
+        line-height: 80px;
+      }
+
+      #amt-0 { color: var(--muted); }
 
       #amt .cur {
         margin-left: auto;
@@ -718,13 +746,13 @@
       #card-a,
       #card-b {
         top: 380px;
-        width: 560px;
+        width: 620px;
         height: 270px;
         padding: 36px 40px;
       }
 
-      #card-a { left: 320px; }
-      #card-b { left: 1040px; }
+      #card-a { left: 300px; }
+      #card-b { left: 1000px; }
 
       .mini-pill {
         display: inline-flex;
@@ -750,7 +778,8 @@
 
       .card-big {
         margin-top: 22px;
-        font-size: 60px;
+        white-space: nowrap;
+        font-size: 50px;
         font-weight: 800;
         letter-spacing: -0.035em;
         line-height: 1.05;
@@ -765,9 +794,9 @@
 
       #link {
         position: absolute;
-        left: 880px;
+        left: 916px;
         top: 512px;
-        width: 160px;
+        width: 88px;
         height: 6px;
         transform-origin: 0 50%;
         background: repeating-linear-gradient(90deg, var(--cyan-deep) 0 14px, transparent 14px 26px);
@@ -776,7 +805,7 @@
 
       #link-dot {
         position: absolute;
-        left: 872px;
+        left: 908px;
         top: 503px;
         width: 24px;
         height: 24px;
@@ -806,6 +835,7 @@
 
       #rev-amt {
         margin-top: 18px;
+        font-variant-numeric: tabular-nums;
         font-size: 120px;
         font-weight: 800;
         letter-spacing: -0.04em;
@@ -849,7 +879,27 @@
         font-weight: 500;
       }
 
-      #rev-stats b { color: var(--ink); font-weight: 800; }
+      #rev-stats b {
+        color: var(--ink);
+        font-weight: 800;
+        display: inline-flex;
+        align-items: flex-end;
+        line-height: 1;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .odo-s {
+        display: inline-block;
+        height: 24px;
+        line-height: 24px;
+        overflow: hidden;
+        vertical-align: bottom;
+      }
+
+      .odo-s .strip span {
+        height: 24px;
+        line-height: 24px;
+      }
 
       #plus {
         position: absolute;
@@ -894,13 +944,33 @@
         background: var(--cyan);
       }
 
-      /* withdraw panel */
+      /* withdraw phone */
+      #s9-txt {
+        position: absolute;
+        inset: 0;
+      }
+
       #wd {
-        left: 600px;
-        top: 60px;
-        width: 720px;
-        height: 800px;
+        left: 630px;
+        top: 120px;
+        width: 660px;
+        height: 1320px;
         padding: 40px;
+        border: 12px solid #111417;
+        border-radius: 76px;
+        box-shadow: 0 60px 120px rgba(11, 17, 20, 0.28);
+      }
+
+      #wd::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 24px;
+        width: 170px;
+        height: 36px;
+        margin-left: -85px;
+        border-radius: 18px;
+        background: #111417;
       }
 
       .wd-row {
@@ -954,15 +1024,15 @@
         height: 20px;
       }
 
-      #wd-from { top: 78px; }
-      #wd-row1 { top: 116px; }
-      #wd-row2 { top: 222px; }
-      #wd-amtl { top: 348px; display: flex; justify-content: space-between; left: 40px; right: 40px; position: absolute; }
+      #wd-from { top: 110px; }
+      #wd-row1 { top: 150px; }
+      #wd-row2 { top: 256px; }
+      #wd-amtl { top: 382px; display: flex; justify-content: space-between; left: 40px; right: 40px; position: absolute; }
       #wd-amt {
         position: absolute;
         left: 40px;
         right: 40px;
-        top: 392px;
+        top: 426px;
         height: 96px;
         border-radius: 22px;
         background: var(--field);
@@ -987,15 +1057,20 @@
         height: 44px;
         border-radius: 2px;
         background: var(--cyan-deep);
-        margin-left: -10px;
+        margin-left: -12px;
       }
 
-      #wd-tol { top: 520px; position: absolute; left: 40px; }
+      #wd-typed .ch {
+        display: none;
+        opacity: 1;
+      }
+
+      #wd-tol { top: 554px; position: absolute; left: 40px; }
       #wd-pp {
         position: absolute;
         left: 40px;
         right: 40px;
-        top: 560px;
+        top: 594px;
         height: 118px;
         border-radius: 22px;
         border: 3px solid var(--line);
@@ -1034,7 +1109,7 @@
       #wd-btn {
         left: 40px;
         right: 40px;
-        top: 700px;
+        top: 734px;
         height: 84px;
         overflow: hidden;
       }
@@ -1055,7 +1130,7 @@
       #sent-t1 {
         position: absolute;
         left: 900px;
-        top: 420px;
+        top: 452px;
         font-size: 84px;
         font-weight: 800;
         letter-spacing: -0.035em;
@@ -1065,7 +1140,7 @@
       #sent-t2 {
         position: absolute;
         left: 900px;
-        top: 530px;
+        top: 562px;
         font-size: 48px;
         font-weight: 600;
         color: var(--ink2);
@@ -1088,7 +1163,27 @@
         transform-origin: 100% 0;
       }
 
-      #notif .pp-ic { background: var(--black); color: #fff; }
+      .pp-logo {
+        width: 66px;
+        height: 66px;
+        border-radius: 50%;
+        background: #fff;
+        border: 2px solid var(--line);
+        overflow: hidden;
+        flex: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .pp-logo img {
+        display: block;
+        width: 66px;
+        height: 66px;
+      }
+
+      #notif .pp-logo { width: 78px; height: 78px; }
+      #notif .pp-logo img { width: 78px; height: 78px; }
       #notif .nt { font-size: 22px; font-weight: 700; display: flex; justify-content: space-between; }
       #notif .nt span { color: var(--muted); font-weight: 500; }
       #notif .nb { font-size: 26px; color: var(--ink2); margin-top: 6px; font-weight: 500; }
@@ -1146,17 +1241,6 @@
         height: auto;
       }
 
-      #logo-glow {
-        position: absolute;
-        left: 460px;
-        top: 260px;
-        width: 1000px;
-        height: 560px;
-        border-radius: 50%;
-        background: radial-gradient(circle at 50% 50%, rgba(5, 227, 247, 0.45), rgba(5, 227, 247, 0) 65%);
-        transform-origin: 50% 50%;
-      }
-
       #logo-sweep {
         position: absolute;
         left: 610px;
@@ -1171,10 +1255,10 @@
         position: absolute;
         left: -300px;
         top: -100px;
-        width: 220px;
+        width: 280px;
         height: 400px;
         transform: rotate(20deg);
-        background: linear-gradient(90deg, rgba(5, 227, 247, 0) 0%, rgba(5, 227, 247, 0.55) 50%, rgba(5, 227, 247, 0) 100%);
+        background: linear-gradient(90deg, rgba(5, 227, 247, 0) 0%, rgba(5, 227, 247, 0.8) 50%, rgba(5, 227, 247, 0) 100%);
       }
     </style>
   </head>
@@ -1204,20 +1288,24 @@
       <!-- ============================================================ 1 · HOOK -->
       <section id="s1" class="clip" data-start="0" data-duration="4.6" data-track-index="1">
         <div class="cam" id="s1-cam">
-          <div class="line" id="s1-line" style="top: 476px; font-size: 76px">
-            <span class="w">Someone, </span><span class="w">somewhere, </span><span class="w">just </span><span class="w">bought </span><span class="w">an </span><span class="w"><span class="u-cyan" id="s1-esim">eSIM.<i class="ul"></i></span></span>
-          </div>
+          <div class="line s1w" style="top: 460px"><span class="w">Someone</span></div>
+          <div class="line s1w" style="top: 460px"><span class="w">somewhere</span></div>
+          <div class="line s1w" style="top: 460px"><span class="w">just</span></div>
+          <div class="line s1w" style="top: 460px"><span class="w">bought</span></div>
+          <div class="line s1w" style="top: 460px"><span class="w">an&nbsp;<span class="u-cyan" id="s1-esim">eSIM<i class="ul"></i></span></span></div>
         </div>
       </section>
 
       <!-- ============================================================ ROLE PILL -->
       <div id="pill-layer" class="clip" data-start="4.4" data-duration="42" data-track-index="9">
-        <div id="pill" class="hide">
-          <div id="pill-dot"></div>
-          <div class="pill-txt" id="pill-someone">SOMEONE</div>
-          <div class="pill-txt hide" id="pill-you">YOU</div>
+        <div id="pill-w">
+          <div id="pill" class="hide">
+            <div id="pill-dot"></div>
+            <div class="pill-txt" id="pill-someone">SOMEONE</div>
+            <div class="pill-txt hide" id="pill-you">YOU</div>
+          </div>
+          <div id="pill-ring" class="hide"></div>
         </div>
-        <div id="pill-ring" class="hide"></div>
       </div>
 
       <!-- ============================================================ 2 · DESTINATION -->
@@ -1263,7 +1351,7 @@
               <div class="tab on">Add Funds</div>
             </div>
             <div id="funds-h">Add funds, pay for what you use and save the remaining balance for next trips.</div>
-            <div id="amt"><span id="amt-v">20</span><span class="cur">$</span></div>
+            <div id="amt"><span id="amt-0">0</span><span id="amt-v" class="hide">20</span><span class="cur">$</span></div>
             <div id="presets">
               <div class="pre"><span>$5</span></div>
               <div class="pre" id="pre-20"><i class="fill"></i><span id="pre-20-txt">$20</span></div>
@@ -1337,7 +1425,7 @@
             <div class="lbl">Revenue sharing balance</div>
             <div id="rev-amt">$4.<span class="odo"><span class="strip" id="odo-a"></span></span><span class="odo"><span class="strip" id="odo-b"></span></span></div>
             <div class="btn cyan" id="rev-btn">Withdraw</div>
-            <div id="rev-stats"><span><b>131</b> eligible purchases</span><span><b>$4.16</b> total earned</span></div>
+            <div id="rev-stats"><span><b>$172.8<span class="odo-s"><span class="strip" id="odo-c"></span></span></b> total earned</span><span><b>131</b> eligible purchases</span></div>
           </div>
           <div id="plus" class="hide">+$0.01</div>
 
@@ -1370,7 +1458,7 @@
       </section>
 
       <!-- ============================================================ 9 · CASH OUT -->
-      <section id="s9" class="clip" data-start="39.8" data-duration="3.8" data-track-index="10">
+      <section id="s9" class="clip" data-start="39.8" data-duration="4.3" data-track-index="10">
         <div class="cam" id="s9-cam">
           <div class="card hide" id="wd">
             <div class="lbl caps" id="wd-from" style="position: absolute; left: 40px">From</div>
@@ -1379,17 +1467,22 @@
             <div id="wd-amtl"><span class="lbl caps">Amount</span><span class="lbl">Available: 4.90</span></div>
             <div id="wd-amt"><span class="dol">$</span><span id="wd-typed">3.22</span><span class="caret2 hide" id="wd-caret"></span><span class="max">MAX</span></div>
             <div class="lbl caps" id="wd-tol">To</div>
-            <div id="wd-pp"><i class="sel" id="wd-sel3"></i><div class="pp-ic">P</div><div><div class="pp-t">PayPal</div><div class="pp-s">Instant transfer</div></div></div>
+            <div id="wd-pp"><i class="sel" id="wd-sel3"></i><div class="pp-logo"><img src="assets/img/paypal-logo.png" alt="PayPal" /></div><div><div class="pp-t">PayPal</div><div class="pp-s">Instant transfer</div></div></div>
             <div class="btn black" id="wd-btn"><i class="press" id="wd-press"></i><span>Confirm Withdraw</span></div>
           </div>
         </div>
-        <div class="line mid" id="s9-line" style="top: 60px">
-          <span class="w">Cash </span><span class="w">out </span><span class="w">to </span><span class="w">PayPal. </span><span class="w">Instant </span><span class="w">transfer.</span>
+        <div id="s9-txt">
+          <div class="line" id="s9-l1" style="top: 400px">
+            <span class="w">Cash </span><span class="w">out </span><span class="w">to </span><span class="w">PayPal.</span>
+          </div>
+          <div class="line mid" id="s9-l2" style="top: 528px; color: var(--ink2)">
+            <span class="w">Instant </span><span class="w">transfer.</span>
+          </div>
         </div>
       </section>
 
       <!-- ============================================================ 10 · SENT -->
-      <section id="s10" class="clip" data-start="43.5" data-duration="3.0" data-track-index="11">
+      <section id="s10" class="clip" data-start="44.0" data-duration="2.5" data-track-index="11">
         <div class="cam" id="s10-cam">
           <div class="check-w hide" id="sent-check">
             <div class="check-ring" id="s10-ring"></div>
@@ -1400,7 +1493,7 @@
           <div id="sent-t1" class="hide">Withdrawal sent</div>
           <div id="sent-t2" class="hide"><b>$3.22</b> to PayPal</div>
           <div class="card hide" id="notif">
-            <div class="pp-ic">P</div>
+            <div class="pp-logo"><img src="assets/img/paypal-logo.png" alt="PayPal" /></div>
             <div class="body">
               <div class="nt">PayPal <span>now</span></div>
               <div class="nb">You received&nbsp;<b id="notif-amt">+$3.22</b></div>
@@ -1421,7 +1514,6 @@
       <!-- ============================================================ 12 · LOGO -->
       <section id="s12" class="clip" data-start="49.9" data-duration="2.7" data-track-index="13">
         <div class="cam" id="s12-cam">
-          <div id="logo-glow" class="hide"></div>
           <div id="logo-w" class="hide"><img src="assets/img/roamfi-logo.png" alt="RoamFi" /></div>
           <div id="logo-sweep"><i id="logo-sweep-i"></i></div>
         </div>
@@ -1606,14 +1698,22 @@
 
         // Words fly in on quarter notes, alternating from below / above.
         {
-          const words = $$("#s1-line .w");
+          // One word at a time in the same centre spot: each flies in, holds,
+          // vanishes as the next lands. "an eSIM" lands on the first strong hit.
+          const words = $$(".s1w .w");
+          const ins = [b(2), b(5), b(8), b(10), b(13)];
           words.forEach((w, i) => {
-            const fromY = i % 2 ? -260 : 260;
-            ft(w, { autoAlpha: 0, y: fromY, scale: 0.7, rotation: i % 2 ? 8 : -8 }, { autoAlpha: 1, y: 0, scale: 1, rotation: 0, duration: 0.55, ease: "back.out(1.9)" }, b(2 + i * 2));
+            const at = ins[i];
+            const next = i < words.length - 1 ? ins[i + 1] : null;
+            const fromY = i % 2 ? -220 : 220;
+            ft(w, { autoAlpha: 0, y: fromY, scale: 0.55, rotation: i % 2 ? 6 : -6, filter: "blur(0px)" }, { autoAlpha: 1, y: 0, scale: 1, rotation: 0, duration: 0.42, ease: "back.out(1.8)" }, at);
+            if (next != null) {
+              ft(w, { autoAlpha: 1, scale: 1, filter: "blur(0px)" }, { autoAlpha: 0, scale: 1.5, filter: "blur(10px)", duration: 0.2, ease: "power2.in" }, next - 0.12);
+            }
           });
-          // "eSIM" underline draws + punches on the first strong hit (3.17).
-          ft("#s1-esim .ul", { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power3.out" }, b(13));
-          pop("#s1-esim", b(13), 1.16, 0.4);
+          // "eSIM" underline draws + punches right after the word lands.
+          ft("#s1-esim .ul", { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power3.out" }, b(14));
+          pop("#s1-esim", b(14), 1.14, 0.4);
           idle("#s1-cam", 0, b(17), { y: -10, s: 0.02, period: 2 });
           // Whole line whips off-screen left.
           ft("#s1-cam", { x: 0, filter: "blur(0px)", autoAlpha: 1 }, { x: -2300, filter: "blur(14px)", autoAlpha: 0, duration: 0.38, ease: "power3.in" }, b(17));
@@ -1621,13 +1721,22 @@
 
         /* ================================================== ROLE PILL (4.55 → 45.9) */
 
-        fly("#pill", b(19), { x: -600, rot: -14, scale: 0.7, dur: 0.7, ease: "back.out(1.8)" });
-        idle("#pill", b(19) + 0.7, b(51), { y: -6, period: 3.2 });
+        // First appearance: LARGE in the centre, then shrinks and flies to the corner.
+        const PILL_C = { x: 685, y: 401 }; // wrapper offset that centres the pill on screen
+        tl.set("#pill-w", { x: PILL_C.x, y: PILL_C.y, scale: 3 }, 0);
+        fly("#pill", b(19), { y: 90, rot: -10, scale: 0.4, dur: 0.55, ease: "back.out(2)" });
+        tl.to("#pill-w", { x: 0, y: 0, scale: 1, duration: 0.55, ease: "power3.inOut" }, b(21));
+        idle("#pill", b(21) + 0.55, b(51), { y: -6, period: 3.2 });
         // Camera goes tight inside the funds panel: pill darts off, returns as the panel leaves.
         out("#pill", b(51), { x: -520, rot: -10, scale: 0.7, blur: 6, dur: 0.36 });
         fly("#pill", b(75), { x: -520, rot: -10, scale: 0.7, blur: 6, dur: 0.5, ease: "back.out(1.8)" });
-        idle("#pill", b(75) + 0.5, b(92), { y: -6, period: 3.2 });
+        idle("#pill", b(75) + 0.5, b(88), { y: -6, period: 3.2 });
 
+        // YOU: pill glides to the centre and grows, morphs there on the downbeat,
+        // then shrinks and flies back to the corner.
+        tl.to("#pill-w", { x: PILL_C.x, y: PILL_C.y, scale: 3, duration: 0.5, ease: "power3.inOut" }, b(88));
+        tl.to("#pill-w", { x: PILL_C.x + 123, duration: 0.42, ease: "power3.inOut" }, b(92) + 0.08);
+        tl.to("#pill-w", { x: 0, y: 0, scale: 1, duration: 0.5, ease: "power3.inOut" }, b(93));
         // Morph SOMEONE → YOU on the phrase downbeat at 21.40.
         {
           const sc = splitChars($("#pill-someone"));
@@ -1646,14 +1755,14 @@
 
         // Tight inside the withdraw panel: pill darts off, back for the sent scene.
         out("#pill", b(178), { x: -520, rot: -10, scale: 0.7, blur: 6, dur: 0.36 });
-        fly("#pill", b(188), { x: -520, rot: -10, scale: 0.7, blur: 6, dur: 0.55, ease: "back.out(1.8)" });
-        idle("#pill", b(188) + 0.55, b(198), { y: -6, period: 3.2 });
+        fly("#pill", b(190), { x: -520, rot: -10, scale: 0.7, blur: 6, dur: 0.55, ease: "back.out(1.8)" });
+        idle("#pill", b(190) + 0.55, b(198), { y: -6, period: 3.2 });
         // Pill leaves with the sent scene.
         out("#pill", b(198), { x: -500, rot: -10, scale: 0.7, blur: 8, dur: 0.4 });
 
         /* ================================================== 2 · DESTINATION (4.55 → 10.32) */
 
-        lineIn("#s2-line", b(21), "left");
+        lineIn("#s2-line", b(22), "left");
         lineOut("#s2-line", b(27), "right");
 
         // Search object flies in from the right on the phrase downbeat.
@@ -1662,12 +1771,15 @@
         camTo("#s2-cam", 960, 470, 1.55, b(30), 0.8);
         // Placeholder out, caret in, typing "United States" (13 chars, ~1.5s).
         ft("#ph", { autoAlpha: 1, x: 0 }, { autoAlpha: 0, x: -30, duration: 0.25, ease: "power2.in" }, b(31));
-        ft("#caret", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.05 }, b(31) + 0.2);
+        // Caret is there from the moment the field appears, blinking at the left edge.
+        ft("#caret", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.05 }, b(28) + 0.3);
+        ft("#caret", { opacity: 1 }, { opacity: 0, duration: 0.23, repeat: 5, yoyo: true, ease: "steps(1)" }, b(28) + 0.4);
+        tl.set("#caret", { opacity: 1 }, b(32) - 0.02);
         {
           const chars = splitChars($("#typed"));
-          ft(chars, { opacity: 0 }, { opacity: 1, duration: 0.01, stagger: 0.115 }, b(32));
-          // caret blink (finite)
-          ft("#caret", { opacity: 1 }, { opacity: 0, duration: 0.25, repeat: 7, yoyo: true, ease: "steps(1)" }, b(32) + 1.5);
+          // Reveal by display so each glyph gains width as it is typed and the caret follows.
+          ft(chars, { display: "none" }, { display: "inline", duration: 0.001, stagger: 0.115 }, b(32));
+          ft("#caret", { opacity: 1 }, { opacity: 0, duration: 0.23, repeat: 7, yoyo: true, ease: "steps(1)" }, b(32) + 1.6);
         }
         // Hot-destination chips give way to the result row.
         out("#chips", b(36), { y: 60, blur: 4, dur: 0.28 });
@@ -1693,7 +1805,8 @@
         // "$20" selected: fill sweeps, text pops, amount field shows 20.
         ft("#pre-20 .fill", { scale: 0 }, { scale: 1, duration: 0.32, ease: "back.out(1.6)" }, b(56));
         pop("#pre-20", b(56), 1.1, 0.4);
-        ft("#amt-v", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.3, ease: "back.out(2)" }, b(56) + 0.05);
+        ft("#amt-0", { autoAlpha: 1, y: 0 }, { autoAlpha: 0, y: -34, duration: 0.22, ease: "power2.in" }, b(56) + 0.05);
+        ft("#amt-v", { autoAlpha: 0, y: 34 }, { autoAlpha: 1, y: 0, duration: 0.32, ease: "back.out(2)" }, b(56) + 0.12);
         // Phrase downbeat: PAN DOWN inside the panel, no zoom-out.
         camTo("#s3-cam", 960, 700, 2.0, b(60), 0.7);
         // "$20 → 8.58 GB" animates in.
@@ -1719,14 +1832,14 @@
         }
         burst("#s4-check", "#s4-path", "#s4-ring", b(80));
         // Camera pushes in on the check; text leaves.
-        lineOut("#s4-line", b(84), "up");
-        camTo("#s4-cam", 960, 540, 1.3, b(82), 1.8, "power1.inOut");
-        // Check flies INTO the camera → cut to the flip.
-        intoCam("#s4-cam", b(90), { from: 1.3, to: 5.5, dur: 0.46 });
+        lineOut("#s4-line", b(83), "up");
+        camTo("#s4-cam", 960, 540, 1.3, b(81), 1.1, "power1.inOut");
+        // Check flies INTO the camera early → the YOU pill takes the centre.
+        intoCam("#s4-cam", b(86), { from: 1.3, to: 5.5, dur: 0.46 });
 
         /* ================================================== 5 · FLIP TO YOU (21.40 → 25.09) */
 
-        lineIn("#s5-l1", b(93), "right");
+        lineIn("#s5-l1", b(94), "right");
         lineOut("#s5-l1", b(99), "left");
         // "Weeks ago." drops in with bounce.
         lineIn("#s5-l2", b(100), "up", { ease: "bounce.out", dur: 0.7, stagger: 0.1 });
@@ -1742,9 +1855,9 @@
         // Connector draws A → B and a share-dot travels it.
         ft("#link", { autoAlpha: 0, scaleX: 0 }, { autoAlpha: 1, scaleX: 1, duration: 0.4, ease: "power3.out" }, b(111));
         ft("#link-dot", { autoAlpha: 0, x: 0, scale: 0.5 }, { autoAlpha: 1, x: 0, scale: 1, duration: 0.15 }, b(112));
-        tl.to("#link-dot", { x: 150, duration: 0.5, ease: "power2.inOut" }, b(112) + 0.15);
+        tl.to("#link-dot", { x: 84, duration: 0.5, ease: "power2.inOut" }, b(112) + 0.15);
         tl.to("#link-dot", { x: 0, duration: 0.01 }, b(114) + 0.2);
-        tl.to("#link-dot", { x: 150, duration: 0.5, ease: "power2.inOut" }, b(116));
+        tl.to("#link-dot", { x: 84, duration: 0.5, ease: "power2.inOut" }, b(116));
         pop("#card-b", b(114) + 0.35, 1.05, 0.4);
         pop("#card-b", b(118), 1.05, 0.4);
         lineIn("#s6-line", b(111), "down", { stagger: 0.05 });
@@ -1760,8 +1873,10 @@
         // Odometer strips: cents tens (1→2) and cents ones (9→0).
         buildStrip($("#odo-a"), "0123456789");
         buildStrip($("#odo-b"), "01234567890");
+        buildStrip($("#odo-c"), "45");
         tl.set("#odo-a", { y: -120 * 1 }, 0);
         tl.set("#odo-b", { y: -120 * 9 }, 0);
+        tl.set("#odo-c", { y: 0 }, 0);
 
         fly("#rev", b(124), { y: 900, rot: 6, scale: 0.8, dur: 0.75, ease: "back.out(1.3)" });
         idle("#rev", b(127), b(140), { y: -8, rot: 0.4, period: 3 });
@@ -1772,6 +1887,7 @@
         // The tick: $4.19 → $4.20 with pop + cyan glow + "+$0.01".
         tl.to("#odo-a", { y: -120 * 2, duration: 0.42, ease: "back.out(1.2)" }, b(133));
         tl.to("#odo-b", { y: -120 * 10, duration: 0.42, ease: "back.out(1.2)" }, b(133));
+        tl.to("#odo-c", { y: -24, duration: 0.42, ease: "back.out(1.2)" }, b(133) + 0.1);
         pop("#rev", b(133), 1.07, 0.45);
         ft("#rev-glow", { opacity: 0 }, { opacity: 1, duration: 0.12, ease: "power2.out" }, b(133));
         tl.to("#rev-glow", { opacity: 0, duration: 0.9, ease: "power2.out" }, b(133) + 0.15);
@@ -1824,43 +1940,45 @@
 
         /* ================================================== 9 · CASH OUT (39.86 → 43.55) */
 
-        lineIn("#s9-line", b(172), "left", { stagger: 0.06 });
-        lineOut("#s9-line", b(178), "up", { dur: 0.3 });
-
-        // Withdraw panel flies in from below; camera goes tight on the FROM row.
-        fly("#wd", b(178), { y: 1100, rot: -3, scale: 0.92, dur: 0.6, ease: "back.out(1.1)" });
-        camTo("#s9-cam", 960, 220, 2.1, b(178), 0.6);
+        // "Cash out to PayPal." centred, then "Instant transfer." joins on a second line.
+        lineIn("#s9-l1", b(172), "left", { stagger: 0.06 });
+        lineIn("#s9-l2", b(174), "right", { stagger: 0.08 });
+        // Both lines float UP (fast out) as the phone rises from the bottom.
+        ft("#s9-txt", { y: 0, autoAlpha: 1, filter: "blur(0px)" }, { y: -620, autoAlpha: 0, filter: "blur(8px)", duration: 0.5, ease: "power2.out" }, b(178) - 0.2);
+        fly("#wd", b(178), { y: 1500, scale: 0.96, dur: 0.85, ease: "back.out(1.05)" });
+        // Camera goes tight on the FROM row.
+        camTo("#s9-cam", 960, 314, 2.1, b(180), 0.7);
         // Selected: "Revenue sharing balance 4.22".
-        ft("#wd-sel1", { opacity: 0 }, { opacity: 1, duration: 0.2 }, b(180));
-        pop("#wd-tick1", b(180), 1.4, 0.4);
+        ft("#wd-sel1", { opacity: 0 }, { opacity: 1, duration: 0.2 }, b(182));
+        pop("#wd-tick1", b(182), 1.4, 0.4);
         // PAN DOWN (same zoom) to the amount field; "3.22" types.
-        camTo("#s9-cam", 960, 500, 2.1, b(182), 0.45);
-        ft("#wd-caret", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.05 }, b(182) + 0.2);
+        camTo("#s9-cam", 960, 594, 2.1, b(184), 0.45);
+        ft("#wd-caret", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.05 }, b(184) + 0.2);
         {
           const chars = splitChars($("#wd-typed"));
-          ft(chars, { opacity: 0 }, { opacity: 1, duration: 0.01, stagger: 0.08 }, b(183));
+          ft(chars, { display: "none" }, { display: "inline", duration: 0.001, stagger: 0.1 }, b(185));
         }
-        pop("#wd-amt .max", b(184) + 0.1, 1.25, 0.35);
+        pop("#wd-amt .max", b(186) + 0.15, 1.25, 0.35);
         // PAN DOWN to the PayPal row.
-        camTo("#s9-cam", 960, 679, 2.1, b(185), 0.4);
-        ft("#wd-sel3", { opacity: 0 }, { opacity: 1, duration: 0.2 }, b(186));
-        pop("#wd-pp", b(186), 1.03, 0.3);
+        camTo("#s9-cam", 960, 773, 2.1, b(187), 0.4);
+        ft("#wd-sel3", { opacity: 0 }, { opacity: 1, duration: 0.2 }, b(188));
+        pop("#wd-pp", b(188), 1.03, 0.3);
         // Zoom into confirm; button fills cyan as it's pressed.
-        camTo("#s9-cam", 960, 802, 2.6, b(187), 0.35, "power3.in");
-        ft("#wd-press", { scaleX: 0 }, { scaleX: 1, duration: 0.2, ease: "power3.out" }, b(187) + 0.15);
-        tl.to("#wd-btn span", { color: "#0b1114", duration: 0.15 }, b(187) + 0.15);
+        camTo("#s9-cam", 960, 896, 2.6, b(189), 0.32, "power3.in");
+        ft("#wd-press", { scaleX: 0 }, { scaleX: 1, duration: 0.2, ease: "power3.out" }, b(189) + 0.18);
+        tl.to("#wd-btn span", { color: "#0b1114", duration: 0.15 }, b(189) + 0.18);
 
         /* ================================================== 10 · SENT (43.55 → 46.32) */
 
-        burst("#sent-check", "#s10-path", "#s10-ring", b(188));
-        fly("#sent-t1", b(189), { y: 90, x: 60, dur: 0.5, ease: "back.out(1.8)" });
-        fly("#sent-t2", b(190), { y: 90, x: 60, dur: 0.5, ease: "back.out(1.8)" });
-        pop("#sent-t2 b", b(191), 1.12, 0.35);
+        burst("#sent-check", "#s10-path", "#s10-ring", b(190));
+        fly("#sent-t1", b(190) + 0.15, { y: 90, x: 60, dur: 0.5, ease: "back.out(1.8)" });
+        fly("#sent-t2", b(191), { y: 90, x: 60, dur: 0.5, ease: "back.out(1.8)" });
+        pop("#sent-t2 b", b(192), 1.12, 0.35);
         // PayPal notification from the top-right corner ON the beat (chime lands here too).
         fly("#notif", b(192), { x: 500, y: -400, rot: 12, scale: 0.6, dur: 0.6, ease: "back.out(1.7)" });
         pop("#notif-amt", b(193), 1.3, 0.4);
         idle("#notif", b(194), b(198), { y: 6, rot: -0.5, period: 1.8 });
-        idle("#s10-cam", b(188), b(198), { s: 0.04, period: 2.4 });
+        idle("#s10-cam", b(190), b(198), { s: 0.04, period: 2.4 });
         // All fly out.
         out("#sent-check", b(198), { x: -600, scale: 0.4, rot: -30, blur: 8, dur: 0.4 });
         out("#sent-t1", b(198), { y: 300, blur: 8, dur: 0.36 });
@@ -1889,12 +2007,10 @@
 
         /* ================================================== 12 · LOGO (50.01 → end) */
 
-        ft("#logo-glow", { autoAlpha: 0, scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 1.2, ease: "power2.out" }, b(216));
         fly("#logo-w", b(216), { y: 320, scale: 0.55, dur: 0.85, ease: "back.out(1.4)" });
         // Soft cyan light sweep across the logo.
         ft("#logo-sweep-i", { x: 0, rotation: 20 }, { x: 1150, rotation: 20, duration: 1.1, ease: "power2.inOut" }, b(218));
         tl.to("#logo-w", { scale: 1.04, duration: END - b(219), ease: "sine.out" }, b(219));
-        idle("#logo-glow", b(219), END, { s: 0.08, period: 2.6 });
 
         // Pad to the full length so the root timeline spans the soundtrack.
         tl.to({}, { duration: 0.01 }, END - 0.01);
